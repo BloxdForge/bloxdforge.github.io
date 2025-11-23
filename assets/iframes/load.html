@@ -1,0 +1,88 @@
+<head>
+  <title>load</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #181818;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loader {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loader::before {
+      content: "";
+      background: rgba(255, 255, 255, 0.01);
+      backdrop-filter: blur(8px);
+      position: absolute;
+      width: 840px;
+      height: 240px;
+      z-index: 20;
+      border-radius: 0 0 32px 32px;
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      border-top: none;
+      box-shadow: 0 30px 40px rgba(0, 0, 0, 0.1);
+      animation: anim2 2s infinite;
+    }
+
+    .loader div {
+      border-radius: 32px;
+      width: 140px;
+      height: 140px;
+      z-index: -1;
+      animation: anim 2s infinite ease-in-out;
+      animation-delay: calc(-0.3s * var(--i));
+      transform: translateY(20px);
+      margin: 0 24px;
+    }
+
+    .loader div:nth-child(1) {
+      background: #ff7a00;
+    }
+
+    .loader div:nth-child(2) {
+      background: #ff8c1a;
+    }
+
+    .loader div:nth-child(3) {
+      background: #ff9933;
+    }
+
+    .loader div:nth-child(4) {
+      background: #ffb366;
+    }
+
+    @keyframes anim {
+
+      0%,
+      100% {
+        transform: translateY(20px);
+      }
+
+      50% {
+        transform: translateY(-240px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="loader">
+    <div style="--i: 1"></div>
+    <div style="--i: 2"></div>
+    <div style="--i: 3"></div>
+    <div style="--i: 4"></div>
+  </div>
+</body>
