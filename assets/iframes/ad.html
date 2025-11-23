@@ -56,6 +56,20 @@
         #ad1-container, #ad2-container {
             display: flex;
             justify-content: center;
+            min-height: 50px;
+        }
+        
+        #ad2-container {
+            min-height: 600px;
+        }
+        
+        .ad-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #a0a0a0;
+            font-style: italic;
         }
     </style>
 </head>
@@ -71,8 +85,16 @@
                     'width' : 320,
                     'params' : {}
                 };
+                
+                // Fallback in case ad doesn't load
+                setTimeout(function() {
+                    var container = document.getElementById('ad1-container');
+                    if (container && container.innerHTML.trim() === '') {
+                        container.innerHTML = '<div class="ad-fallback">Advertisement failed to load</div>';
+                    }
+                }, 3000);
             </script>
-            <script type="text/javascript" src="//www.highperformanceformat.com/2546e09950359015faa6030a9d820a97/invoke.js"></script>
+            <script type="text/javascript" src="https://www.highperformanceformat.com/2546e09950359015faa6030a9d820a97/invoke.js"></script>
         </div>
         <div class="ad-label">Advertisement</div>
     </div>
@@ -88,10 +110,25 @@
                     'width' : 160,
                     'params' : {}
                 };
+                
+                // Fallback in case ad doesn't load
+                setTimeout(function() {
+                    var container = document.getElementById('ad2-container');
+                    if (container && container.innerHTML.trim() === '') {
+                        container.innerHTML = '<div class="ad-fallback">Advertisement failed to load</div>';
+                    }
+                }, 3000);
             </script>
-            <script type="text/javascript" src="//www.highperformanceformat.com/712027dee77da870bf038904c32bbfc5/invoke.js"></script>
+            <script type="text/javascript" src="https://www.highperformanceformat.com/712027dee77da870bf038904c32bbfc5/invoke.js"></script>
         </div>
         <div class="ad-label">Advertisement</div>
     </div>
+    
+    <script>
+        // Error handling for ad scripts
+        window.onerror = function(message, source, lineno, colno, error) {
+            console.error('Ad script error:', message, source, lineno, colno, error);
+        };
+    </script>
 </body>
 </html>
