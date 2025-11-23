@@ -1161,7 +1161,7 @@
     <iframe src="./assets/home.html" id="contentFrame"></iframe>
 
     <div class="sidebar right-sidebar">
-      <iframe src="./assets/iframes/ad.html"
+      <iframe src="../assets/iframes/ad.html"
         style="width: 100%; height: 100%; border: none; border-radius: 25px;"></iframe>
     </div>
   </div>
@@ -1175,10 +1175,6 @@
       if (event.data && event.data.action === 'walkthroughComplete') {
         document.getElementById('walkthrough-overlay').style.display = 'none';
         localStorage.setItem('bloxdforge-walkthrough-completed', 'true');
-
-        if (event.data.purpose) {
-          handleWalkthroughPurpose(event.data.purpose);
-        }
       }
 
       if (event.data && event.data.action === 'userSignedIn') {
@@ -2532,10 +2528,6 @@
       if (event.data && event.data.action === 'walkthroughComplete') {
         document.getElementById('walkthrough-overlay').style.display = 'none';
         localStorage.setItem('bloxdforge-walkthrough-completed', 'true');
-
-        if (event.data.purpose) {
-          handleWalkthroughPurpose(event.data.purpose);
-        }
       }
 
       if (event.data && event.data.action === 'userSignedIn') {
@@ -2543,45 +2535,7 @@
       }
     });
 
-    function handleWalkthroughPurpose(purpose) {
-      const iframe = document.getElementById('contentFrame');
-      const cards = document.querySelectorAll('.card');
-      const homeBtn = document.querySelector('.long-btn');
-
-      switch (purpose) {
-        case 'workshop':
-          iframe.src = './assets/workshop.html';
-          cards.forEach(c => c.classList.remove('active-card'));
-          homeBtn.classList.remove('active-btn');
-          document.querySelector('.card[data-url="./assets/workshop.html"]').classList.add('active-card');
-          break;
-
-        case 'creator':
-          iframe.src = './assets/creator.html';
-          cards.forEach(c => c.classList.remove('active-card'));
-          homeBtn.classList.remove('active-btn');
-          document.querySelector('.card[data-url="./assets/creator.html"]').classList.add('active-card');
-          break;
-
-        case 'worldforge':
-          iframe.src = './assets/worldforge.html';
-          cards.forEach(c => c.classList.remove('active-card'));
-          homeBtn.classList.remove('active-btn');
-          document.querySelector('.card[data-url="./assets/worldforge.html"]').classList.add('active-card');
-          break;
-
-        case 'ai':
-          showNotification('To access Bloxd AI, click on the AI assistant in the menu!');
-          break;
-
-        case 'home':
-        default:
-          iframe.src = './assets/home.html';
-          cards.forEach(c => c.classList.remove('active-card'));
-          homeBtn.classList.add('active-btn');
-          break;
-      }
-    }
+    // handleWalkthroughPurpose function removed as part of simplification
 
     fullscreenBtn.addEventListener('click', () => {
       if (CURRENT_USER?.username && checkIfUserIsBanned(CURRENT_USER.username)) {

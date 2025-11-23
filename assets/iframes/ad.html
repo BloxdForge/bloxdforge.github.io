@@ -1,73 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <title>Safe Ads</title>
-  <style>
-    body {
-      margin: 0;
-      background-color: #181818;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      min-height: 100vh;
-    }
-
-    iframe {
-      border: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ads</title>
 </head>
-
 <body>
-
-  <iframe id="tallAd" width="160" height="600" sandbox="allow-scripts allow-same-origin allow-popups" srcdoc="
-    <html>
-      <head>
-        <base target='_blank'>
-      </head>
-      <body style='margin:0;'>
-        <script type='text/javascript'>
-          atOptions = {
-            'key': 'ad3947e867b6f05de07231d510257667',
-            'format': 'iframe',
-            'height': 600,
-            'width': 160,
-            'params': {}
-          };
+    <!-- Ad 1 -->
+    <div id="ad1-container">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '2546e09950359015faa6030a9d820a97',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
         </script>
-        <script type='text/javascript' src='//www.highperformanceformat.com/ad3947e867b6f05de07231d510257667/invoke.js'></script>
-      </body>
-    </html>
-  "></iframe>
+        <script type="text/javascript" src="//www.highperformanceformat.com/2546e09950359015faa6030a9d820a97/invoke.js"></script>
+    </div>
 
-  <iframe id="bottomAd" width="468" height="60" sandbox="allow-scripts allow-same-origin allow-popups" srcdoc="
-    <html>
-      <head>
-        <base target='_blank'>
-      </head>
-      <body style='margin:0;'>
-        <script async='async' data-cfasync='false' src='//pl27524901.effectivegatecpm.com/025a28ee6ce5c5514fa0aa0a6e1a65c8/invoke.js'></script>
-        <div id='container-025a28ee6ce5c5514fa0aa0a6e1a65c8'></div>
-      </body>
-    </html>
-  "></iframe>
-
-  <script>
-    function refreshAd(id) {
-      const iframe = document.getElementById(id);
-      const srcdoc = iframe.srcdoc;
-      iframe.srcdoc = '';
-      setTimeout(() => { iframe.srcdoc = srcdoc; }, 50);
-    }
-
-    setInterval(() => refreshAd('tallAd'), 30000);
-    setInterval(() => refreshAd('bottomAd'), 30000);
-  </script>
-
+    <!-- Ad 2 -->
+    <div id="ad2-container">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '712027dee77da870bf038904c32bbfc5',
+                'format' : 'iframe',
+                'height' : 600,
+                'width' : 160,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/712027dee77da870bf038904c32bbfc5/invoke.js"></script>
+    </div>
 </body>
-
 </html>
