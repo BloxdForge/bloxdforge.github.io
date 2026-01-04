@@ -631,9 +631,15 @@
       backdrop-filter: blur(5px);
     }
     
+    .modal.display-flex {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
     .modal-content {
       background: linear-gradient(145deg, #262525, #212020);
-      margin: 5% auto;
+      margin: 0;  
       padding: 0;
       border: 1px solid #3a3939;
       border-radius: 24px;
@@ -750,6 +756,70 @@
       margin: 5px 0;
     }
     
+    /* AI Assistant Modal with 9:16 aspect ratio - Phone-like appearance */
+    #aiAssistantModal .modal-content {
+      width: 300px; /* 9:16 aspect ratio with 533px height */
+      height: 533px; /* 9:16 aspect ratio when width is 300px (300*16/9) */
+      margin: 0 auto; /* Center the modal */
+      border-radius: 30px; /* More phone-like rounded corners */
+      overflow: hidden; /* Ensure content fits within rounded corners */
+      position: relative;
+    }
+    
+    /* Add phone-like status bar */
+    #aiAssistantModal .modal-header {
+      padding: 15px 20px 10px 20px;
+      background: linear-gradient(90deg, #262525, #212020);
+      border-radius: 30px 30px 0 0;
+      border-bottom: 1px solid #3a3939;
+      position: relative; /* Ensure proper stacking */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    /* Ensure modal body takes remaining space */
+    #aiAssistantModal .modal-body {
+      height: calc(100% - 60px); /* Account for header height */
+      position: relative;
+      padding: 0;
+      margin: 0;
+    }
+    
+    #aiAssistantModal .modal-header h2 {
+      font-size: 1.1rem;
+      text-align: center;
+      margin: 0;
+      flex: 1; /* Allow title to take available space */
+    }
+    
+    #aiAssistantModal .close {
+      position: static;
+      font-size: 1.5rem;
+      margin-left: auto; /* Push to the right */
+      cursor: pointer;
+    }
+    
+    /* For different screen sizes, maintain aspect ratio */
+    @media (min-width: 768px) {
+      #aiAssistantModal .modal-content {
+        width: 360px; /* 9:16 aspect ratio with 640px height */
+        height: 640px;
+        border-radius: 35px;
+      }
+      
+      #aiAssistantModal .modal-header {
+        border-radius: 35px 35px 0 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      #aiAssistantModal .modal-body {
+        height: calc(100% - 60px);
+      }
+    }
+    
     /* Limited text in card */
     .item-content-limited {
       display: -webkit-box;
@@ -800,6 +870,18 @@
       animation: modalopen 0.3s ease;
     }
   </style>
+  
+  <!-- AI Assistant Modal -->
+  <div id="aiAssistantModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close" id="closeAiAssistantModal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <iframe id="aiAssistantFrame" src="data/iframes/ai-assistant.html" frameborder="0" style="border: none; width: 100%; height: 100%;"></iframe>
+      </div>
+    </div>
+  </div>
   
   <!-- Article Details Modal -->
   <div id="articleModal" class="modal">
@@ -866,7 +948,7 @@
       </div>
       <div class="hero-buttons">
         <button class="hero-btn primary" id="exploreBtn">
-          <i class="fas fa-compass"></i> Explore Articles
+          <i class="fas fa-compass"></i> AI Agent
         </button>
         <button class="hero-btn secondary" id="guidesBtn">
           <i class="fas fa-book-open"></i> View Guides
@@ -1206,23 +1288,42 @@
     }
     
     document.getElementById('closeArticleModal').addEventListener('click', function() {
-      document.getElementById('articleModal').style.display = 'none';
+      const modal = document.getElementById('articleModal');
+      modal.style.display = 'none';
+      modal.classList.remove('display-flex');
     });
     
     document.getElementById('closeGuidesModal').addEventListener('click', function() {
-      document.getElementById('guidesModal').style.display = 'none';
+      const modal = document.getElementById('guidesModal');
+      modal.style.display = 'none';
+      modal.classList.remove('display-flex');
+    });
+    
+    // AI Assistant Modal Event Listeners
+    document.getElementById('closeAiAssistantModal').addEventListener('click', function() {
+      const modal = document.getElementById('aiAssistantModal');
+      modal.style.display = 'none';
+      modal.classList.remove('display-flex');
     });
     
     window.addEventListener('click', function(event) {
       const articleModal = document.getElementById('articleModal');
       const guidesModal = document.getElementById('guidesModal');
+      const aiAssistantModal = document.getElementById('aiAssistantModal');
       
       if (event.target === articleModal) {
         articleModal.style.display = 'none';
+        articleModal.classList.remove('display-flex');
       }
       
       if (event.target === guidesModal) {
         guidesModal.style.display = 'none';
+        guidesModal.classList.remove('display-flex');
+      }
+      
+      if (event.target === aiAssistantModal) {
+        aiAssistantModal.style.display = 'none';
+        aiAssistantModal.classList.remove('display-flex');
       }
     });
     
@@ -1232,7 +1333,10 @@
       
       if (exploreBtn) {
         exploreBtn.addEventListener('click', function() {
-          document.querySelector('.header').scrollIntoView({ behavior: 'smooth' });
+          // Open the AI assistant modal
+          const modal = document.getElementById('aiAssistantModal');
+          modal.style.display = 'flex';
+          modal.classList.add('display-flex');
         });
       }
       

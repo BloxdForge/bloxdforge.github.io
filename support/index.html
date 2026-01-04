@@ -4,26 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/favicon.ico" type="image/png">
-    <title>BloxdForge - Support | One Stop Solution to Bloxd Gaming</title>
-    <meta name="description" content="Bloxd Forge is a Bloxd QOL (Quality-Of-Life) improvement mod that offers texture-packs, a FPS booster, a chat, and a discord for support.">
-    <meta name="keywords" content="bloxd, forge, bloxdforge, bloxd forge, bloxd forge plus, chromebook bloxd, bloxd unblocked, minecraft web unblocked, minecraft free, bloxdforge plus, bloxd forge plus, bloxd multiplayer, bloxd bedwars, bloxd skywars, minecraft cracked, minecraft cracked bedwars, minecraft cracked skywars, bloxxd 4v4, bloxd pvp, bloxd autoclicker, bloxd fps booster, bloxd texture packs, bloxd texture pack, bloxd tpack, forge bloxd, forgebloxd, bloxdforge web, bloxd forge web, minecraft browser, minecraft online, minecraft multiplayer browser, minecraft web, minecraft web client, bloxd forge client, bloxd client, bloxd web, bloxd forge web client, minecraft web multiplayer, minecraft browser game, minecraft web game, bloxd forge game, bloxd game, bloxd web game, bloxd forge web game, minecraft unblocked school, minecraft school unblocked, bloxd forge school, bloxd school, minecraft browser unblocked, minecraft online unblocked, bloxd forge unblocked, bloxd unblocked game, minecraft web version, bloxd forge version, bloxd version">
+    <title>Facet/Bloxd - Support | One Stop Solution to Bloxd Gaming</title>
+    <meta name="description" content="Facet/Bloxd is a Bloxd QOL (Quality-Of-Life) improvement mod that offers texture-packs, a FPS booster, a chat, and a discord for support.">
+    <meta name="keywords" content="facet, bloxd, forge, bloxdforge, bloxd forge, bloxd forge plus, chromebook bloxd, bloxd unblocked, minecraft web unblocked, minecraft free, bloxdforge plus, bloxd forge plus, bloxd multiplayer, bloxd bedwars, bloxd skywars, minecraft cracked, minecraft cracked bedwars, minecraft cracked skywars, bloxxd 4v4, bloxd pvp, bloxd autoclicker, bloxd fps booster, bloxd texture packs, bloxd texture pack, bloxd tpack, forge bloxd, forgebloxd, bloxdforge web, bloxd forge web, minecraft browser, minecraft online, minecraft multiplayer browser, minecraft web, minecraft web client, bloxd forge client, bloxd client, bloxd web, bloxd forge web client, minecraft web multiplayer, minecraft browser game, minecraft web game, bloxd forge game, bloxd game, bloxd web game, bloxd forge web game, minecraft unblocked school, minecraft school unblocked, bloxd forge school, bloxd school, minecraft browser unblocked, minecraft online unblocked, bloxd forge unblocked, bloxd unblocked game, minecraft web version, bloxd forge version, bloxd version">
     <style>
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html,
         body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
+            margin: 0;
+            height: 100%;
+            background: #141313;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #181818;
-            color: #ffffff;
+            display: flex;
+            gap: 30px;
         }
 
         h1 {
-            color: #FFA500;
+            color: #ff6b39;
             text-align: center;
-            border-bottom: 2px solid #FFA500;
+            border-bottom: 2px solid #ff6b39;
             padding-bottom: 10px;
-            text-shadow: 0 0 10px #FF7F00, 0 0 20px #FFA500;
+            text-shadow: 2px 2px 4px rgba(255, 107, 57, 0.5);
+            font-size: 2.5rem;
+            margin: 20px 0;
         }
 
         .intro {
@@ -32,29 +47,24 @@
             margin-bottom: 30px;
         }
 
-        .container {
-            display: flex;
-            gap: 30px;
-            margin-top: 30px;
-        }
-
         .sidebar {
             width: 250px;
-            background: #2a2a2a;
+            background: linear-gradient(180deg, #1b1a1a 0%, #191818 100%);
+            border: 1px solid #2c2b2b;
+            border-radius: 18px;
             padding: 20px;
-            border-radius: 5px;
             position: sticky;
             top: 20px;
             height: fit-content;
         }
 
         .sidebar h3 {
-            color: #FFA500;
+            color: #ff6b39;
             margin-top: 0;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            border-bottom: 1px solid #2c2b2b;
+            padding-bottom: 10px;
         }
 
         .sidebar ul {
@@ -65,19 +75,29 @@
 
         .sidebar li {
             margin: 8px 0;
-            padding: 8px 12px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
+            padding: 12px 15px;
+            border-radius: 12px;
+            transition: all 0.3s;
+            background: linear-gradient(90deg, #262525 0%, #242323 100%);
+            border: 1px solid #3a3939;
         }
 
         .sidebar li:hover {
-            background-color: #333333;
+            background: linear-gradient(90deg, #ff6b39 0%, #ff8c5a 100%);
+            border-color: #f78c5a;
+            color: #fff;
+            font-weight: bold;
         }
 
         .sidebar a {
-            color: #ffffff;
+            color: #e0e0e0;
             text-decoration: none;
             display: block;
+            font-size: 1rem;
+        }
+
+        .sidebar a:hover {
+            color: #fff;
         }
 
         .sidebar .category {
@@ -93,32 +113,35 @@
         }
 
         h2 {
-            color: #FFA500;
+            color: #ff6b39;
             margin-top: 0;
             padding-bottom: 10px;
-            border-bottom: 1px solid #444;
+            border-bottom: 1px solid #2c2b2b;
+            font-size: 1.8rem;
+            text-shadow: 1px 1px 2px rgba(255, 107, 57, 0.3);
         }
 
         .faq-item {
-            background-color: #2a2a2a;
+            background: linear-gradient(180deg, #1b1a1a 0%, #191818 100%);
+            border: 1px solid #2c2b2b;
             padding: 20px;
             margin-bottom: 15px;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+            border-radius: 18px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
         }
 
         .faq-item:hover {
-            transform: scale(1.02);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-            background-color: #333333;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.4);
+            border-color: #4a4949;
         }
 
         .question {
             font-weight: bold;
-            color: #FFA500;
+            color: #ff6b39;
             margin-bottom: 10px;
-            font-size: 1.1em;
+            font-size: 1.2rem;
         }
 
         .answer {
@@ -127,7 +150,7 @@
         }
 
         a {
-            color: #3498db;
+            color: #ff6b39;
             text-decoration: none;
         }
 
@@ -141,13 +164,47 @@
             color: #888;
             font-size: 0.8em;
             padding-top: 20px;
-            border-top: 1px solid #444;
+            border-top: 1px solid #2c2b2b;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(145deg, #262525, #212020);
+            color: #e0e0e0;
+            border: 1px solid #444343;
+            padding: 10px 20px;
+            border-radius: 18px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            color: #ff6b39;
         }
     </style>
 </head>
 <body>
     <h1>Help & Support</h1>
     <p class="intro">Find help articles and support here. What do you need help with?</p>
+    
+    <div class="nav-buttons">
+        <a href="../app/" class="nav-btn">Open App</a>
+        <a href="../help/" class="nav-btn">Help Center</a>
+        <a href="https://discord.gg/nVgUe4qrhr" class="nav-btn">Discord Support</a>
+    </div>
     
     <div class="container">
         <div class="sidebar">
@@ -156,7 +213,7 @@
                 <ul>
                     <li><a href="#general">General Inquiries</a></li>
                     <li><a href="#technical">Technical Issues</a></li>
-                    <li><a href="#launcher">Bloxd Launcher Concerns</a></li>
+                    <li><a href="#account">Account & Pro Features</a></li>
                     <li><a href="#workshop">Workshop Concerns</a></li>
                     <li><a href="#creator">Creator Concerns</a></li>
                     <li><a href="#wiki">Wiki Concerns</a></li>
@@ -177,8 +234,8 @@
                     <div class="answer">A: We recommend clearing your browser cache, as the process may vary depending on your browser. For assistance, please refer to online resources specific to your browser.</div>
                 </div>
                 <div class="faq-item">
-                    <div class="question">Q: Is BloxdForge available for free?</div>
-                    <div class="answer">A: Yes, BloxdForge is completely free to use. We appreciate any support through our donation links, as contributions help us continue our work.</div>
+                    <div class="question">Q: Is Facet/Bloxd available for free?</div>
+                    <div class="answer">A: Yes, Facet/Bloxd is completely free to use. We appreciate any support through our donation links, as contributions help us continue our work. You can also upgrade to Pro for additional features and ad-free experience.</div>
                 </div>
             </section>
 
@@ -193,20 +250,28 @@
                     <div class="answer">A: Crashes may result from insufficient system resources, software conflicts, or application bugs. We recommend updating to the latest version and ensuring your system meets the necessary requirements.</div>
                 </div>
                 <div class="faq-item">
-                    <div class="question">Q: I cannot send messages to BloxdForge Agent / BloxdForge Coder.</div>
-                    <div class="answer">A: Please join the <a href="https://discord.gg/bwGRAC4WgE">Discord server</a>, and create a ticket in the help channel.</div>
+                    <div class="question">Q: I cannot access certain features in the app.</div>
+                    <div class="answer">A: Some features may be restricted based on your account type. Check your account status in the settings menu of the app. Free users have access to basic features, while Pro users enjoy additional benefits and ad-free experience.</div>
                 </div>
             </section>
 
-            <section id="launcher">
-                <h2>Bloxd Launcher Concerns</h2>
+            <section id="account">
+                <h2>Account & Pro Features</h2>
                 <div class="faq-item">
-                    <div class="question">Q: I am encountering significant lag while playing the game. What actions should I take?</div>
-                    <div class="answer">A: To mitigate lag, consider disabling some of the custom settings offered by BloxdForge, or check your network ping.</div>
+                    <div class="question">Q: How do I sign in to my account?</div>
+                    <div class="answer">A: Click on the profile section in the bottom left of the app interface. Then click the "Sign In" button and follow the prompts to authenticate with your Puter account.</div>
                 </div>
                 <div class="faq-item">
-                    <div class="question">Q: The custom setting(s) are not functioning as anticipated. What should I do?</div>
-                    <div class="answer">A: Please refer to the <a href="#technical">Technical Issues</a> section and report the issue appropriately.</div>
+                    <div class="question">Q: What are the benefits of upgrading to Pro?</div>
+                    <div class="answer">A: Pro users enjoy ad-free experience, exclusive features, priority support, and early access to new functionality. The right sidebar ads are removed for Pro users, and you get additional customization options.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="question">Q: How do I upgrade to Pro?</div>
+                    <div class="answer">A: After signing in, click on the profile menu (gear icon) and select the upgrade options. You can choose from various Pro plans including temporary and permanent options. You can also use redemption codes if available.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="question">Q: What is the difference between Pro and YT Pro?</div>
+                    <div class="answer">A: YT Pro is a special account type for content creators. Both Pro and YT Pro accounts enjoy the same features, but YT Pro is specifically for YouTubers and content creators who promote our platform.</div>
                 </div>
             </section>
 
@@ -233,12 +298,8 @@
             <section id="creator">
                 <h2>Creator Concerns</h2>
                 <div class="faq-item">
-                    <div class="question">Q: I do not possess a key.</div>
-                    <div class="answer">A: Please click the "Get Key" button to acquire a key. This will provide you with access after a brief advertisement.</div>
-                </div>
-                <div class="faq-item">
                     <div class="question">Q: I don't know how to use the UI.</div>
-                    <div class="answer">A: In the right sidebar of the screen, you will find a variety of tools to assist with texture pack creation. Available services include: Piskel (for sprite creation), Blockbench (for 3D modeling), Skybox Generator (for generating skyboxes), PackVault (for file storage), Materialize (for texture editing), and ColorDesigner (for color palettes).</div>
+                    <div class="answer">A: The Creator section provides tools for making texture packs and other content. You can access various services like Piskel for sprite creation, Blockbench for 3D modeling, and other tools via the Creator interface. You can also click the "Show Walkthrough" button in your profile menu to get started.</div>
                 </div>
                 <div class="faq-item">
                     <div class="question">Q: The webpages in the opened windows aren't loading.</div>
@@ -258,21 +319,14 @@
                 <h2>Support Us</h2>
                 <div class="faq-item">
                     <div class="question">Q: Can I support the developers?</div>
-                    <div class="answer">A: Absolutely! Feel free to join our <a href="https://discord.gg/bwGRAC4WgE">Discord</a> and consider <a href="https://www.amazon.com/dp/B0CF4J58QK/?th=1">buying me a cup of coffee</a> or <a href="https://www.amazon.com/b?ie=UTF8&node=117394558011">some snacks</a> to support our efforts.</div>
+                    <div class="answer">A: Absolutely! Feel free to join our <a href="https://discord.gg/nVgUe4qrhr">Discord</a> and consider upgrading to Pro to support our efforts. You can also contribute by reporting bugs, suggesting features, or sharing the platform with others.</div>
                 </div>
                 <div class="faq-item">
                     <div class="question">Q: How can I contribute to the project?</div>
-                    <div class="answer">A: You can contribute by reporting bugs, suggesting features, or assisting with documentation through our GitHub repository or Discord server.</div>
+                    <div class="answer">A: You can contribute by reporting bugs, suggesting features, creating content for the Workshop, or assisting with documentation through our GitHub repository or Discord server.</div>
                 </div>
             </section>
         </div>
     </div>
-
-    <div class="footer">
-        <p>Copyright © <span id="year"></span> ProduX, Ltd. All Rights Reserved.</p>
-    </div>
-    <script>
-        document.getElementById('year').textContent = new Date().getFullYear();
-    </script>
 </body>
 </html>
