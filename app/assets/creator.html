@@ -274,6 +274,7 @@
       position: relative;
       overflow: hidden;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      outline: 1px solid #444343;
     }
 
     .btn-content {
@@ -417,7 +418,8 @@
             </div>
             <div class="carousel-slide">
               <h3>Tip</h3>
-              <p>Did you know you could see how many FPS facet is taking from you? Go to the menu and check the metrics.</p>
+              <p>Did you know you could see how many FPS facet is taking from you? Go to the menu and check the metrics.
+              </p>
             </div>
             <div class="carousel-slide">
               <h3>ForceFace coder</h3>
@@ -451,6 +453,15 @@
       </div>
 
       <div class="big-btn" data-url="./data/iframes/imgtobloxd.html">
+        <div class="btn-title">FaceCG</div>
+        <div class="btn-image"
+          style="background-color: #2a2a2a; display: flex; align-items: center; justify-content: center;">
+          <i class="fas fa-sliders-h" style="font-size: 4rem; color: #ff6b39;"></i>
+        </div>
+        <div class="btn-content">Generate custom CSS instantly with a visual, no-code interface.</div>
+      </div>
+
+      <div class="big-btn" data-url="./data/iframes/imgtobloxd.html">
         <div class="btn-title">Image to Bloxd</div>
         <div class="btn-image"
           style="background-color: #2a2a2a; display: flex; align-items: center; justify-content: center;">
@@ -458,6 +469,7 @@
         </div>
         <div class="btn-content">Convert your images into plans for building them in game.</div>
       </div>
+
 
       <div class="big-btn" data-url="./data/iframes/ForceForge.html">
         <div class="btn-title">ForceFace Coder</div>
@@ -549,7 +561,7 @@
         localStorage.setItem('hasVisitedCreator', 'true');
       } else {
         const random = Math.random();
-        if (random < 0.2) { 
+        if (random < 0.2) {
           const hour = new Date().getHours();
           const minute = new Date().getMinutes().toString().padStart(2, '0');
           welcomeMessage.textContent = `Is it ${hour}:${minute}?`;
@@ -633,24 +645,24 @@
       const iframe = document.querySelector('.fullscreen-frame');
       const instruction = document.getElementById('esc-instruction');
       const mainContent = document.getElementById('main-content');
-      
-      const isIframeVisible = iframe.style.display === 'block' || 
-                             iframe.style.display === '' || 
-                             window.getComputedStyle(iframe).display !== 'none';
-      
+
+      const isIframeVisible = iframe.style.display === 'block' ||
+        iframe.style.display === '' ||
+        window.getComputedStyle(iframe).display !== 'none';
+
       if (isIframeVisible) {
         console.log('ESC pressed - closing iframe');
         iframe.style.display = 'none';
         instruction.style.display = 'none';
         mainContent.style.display = 'block';
-        
+
         iframe.src = '';
-        
+
         return false;
       }
       return true;
     }
-    
+
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         e.preventDefault();
@@ -658,7 +670,7 @@
         handleEscapeKey();
       }
     });
-    
+
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         e.preventDefault();
@@ -666,7 +678,7 @@
         handleEscapeKey();
       }
     });
-    
+
     document.addEventListener('blur', () => {
       setTimeout(() => {
         if (document.activeElement && document.activeElement.tagName === 'IFRAME') {

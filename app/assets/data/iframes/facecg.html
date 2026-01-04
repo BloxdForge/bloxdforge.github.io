@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FaceCG</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+      background: #141313;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #e0e0e0;
+      overflow-x: hidden;
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+      padding: 20px;
+      gap: 20px;
+      background: radial-gradient(circle at top right, #1e1c1c, #141313);
+      overflow: hidden;
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, #1b1a1a 0%, #191818 100%);
+      border: 1px solid #2c2b2b;
+      border-radius: 35px;
+      padding: 24px 20px;
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      flex-shrink: 0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .modules-container {
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+    }
+
+    .active-modules-grid {
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+    }
+
+    .logo-section {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #2c2b2b;
+    }
+
+    .logo-section h1 {
+      font-size: 1.6rem;
+      margin: 0 0 5px 0;
+      background: linear-gradient(45deg, #ff6b39, #ff8c5a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+    }
+
+    .logo-section .subtitle {
+      color: #a0a0a0;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 20px;
+      background: linear-gradient(180deg, #1b1a1a 0%, #191818 100%);
+      border: 1px solid #2c2b2b;
+      border-radius: 35px;
+      width: 100%;
+      max-width: 1200px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 5px;
+      background: linear-gradient(45deg, #ff6b39, #ff8c5a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .subtitle {
+      color: #a0a0a0;
+      font-size: 1rem;
+      letter-spacing: 1px;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      width: 100%;
+      max-width: 1200px;
+      margin-bottom: 20px;
+    }
+
+    .grid-item {
+      background: linear-gradient(180deg, #1b1a1a 0%, #191818 100%);
+      border: 1px solid #2c2b2b;
+      border-radius: 35px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .grid-item h3 {
+      font-size: 1.2rem;
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: #e8e8e8;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .grid-item h3 i {
+      color: #ff6b39;
+      width: 30px;
+    }
+
+    .module-selector {
+      grid-column: span 1;
+    }
+
+    .module-controls {
+      grid-column: span 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .output-area {
+      grid-column: span 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .modules-container {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      padding: 20px;
+      background: linear-gradient(180deg, #1b1a1a 0%, #191818 100%);
+      border: 1px solid #2c2b2b;
+      border-radius: 35px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      overflow-y: auto;
+    }
+
+    .active-modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-auto-rows: minmax(160px, max-content);
+      gap: 15px;
+      margin-top: 15px;
+      position: relative;
+    }
+
+    .active-module-card {
+      background: linear-gradient(90deg, #262525 0%, #242323 100%);
+      border: 1px solid #3a3939;
+      border-radius: 18px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      height: fit-content;
+      min-height: 160px;
+      max-height: 200px;
+    }
+
+    .active-module-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #ff8c5a;
+      flex-shrink: 0;
+    }
+
+    .active-module-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #e8e8e8;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+
+    .active-module-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-shrink: 0;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .active-module-card:hover {
+      transform: translateY(-3px);
+      border-color: #505050;
+      z-index: 1;
+    }
+
+    .active-module-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #ff8c5a;
+    }
+
+    .active-module-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #e8e8e8;
+      margin-bottom: 8px;
+    }
+
+    .active-module-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .config-btn {
+      background: linear-gradient(145deg, #262525, #212020);
+      border: 1px solid #444343;
+      color: #ff6b39;
+      border-radius: 10px;
+      padding: 10px 10px;
+      margin-left: 5px;
+      margin-right: 5px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .config-btn:hover {
+      background: linear-gradient(145deg, #2d2b2b, #262525);
+      color: #ff8c5a;
+    }
+
+    .module-card {
+      background: linear-gradient(90deg, #262525 0%, #242323 100%);
+      border: 1px solid #3a3939;
+      border-radius: 18px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .module-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .module-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #ff8c5a;
+    }
+
+    .remove-btn {
+      background: linear-gradient(145deg, #262525, #212020);
+      border: 1px solid #444343;
+      color: #ff6b39;
+      border-radius: 10px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .remove-btn:hover {
+      background: linear-gradient(145deg, #2d2b2b, #262525);
+      color: #ff8c5a;
+    }
+
+    .module-controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .input-group {
+      margin-bottom: 0;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #a0a0a0;
+      font-size: 0.9rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="color"],
+    input[type="range"] {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, #262525 0%, #242323 100%);
+      border: 1px solid #3a3939;
+      border-radius: 18px;
+      color: #e8e8e8;
+      font-size: 1rem;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    input[type="color"]:focus,
+    input[type="range"]:focus {
+      outline: none;
+      border-color: #ff6b39;
+      box-shadow: 0 0 0 2px rgba(255, 107, 57, 0.2);
+    }
+
+    input[type="range"] {
+      padding: 0;
+      height: 8px;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 10px;
+      height: 20px;
+      border-radius: 5px;
+      background: #ff6b39;
+      cursor: pointer;
+      border: 2px solid #ff8c5a;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 10px;
+      height: 20px;
+      border-radius: 5px;
+      background: #ff6b39;
+      cursor: pointer;
+      border: 2px solid #ff8c5a;
+    }
+
+    .value-display {
+      display: inline-block;
+      font-size: 0.85rem;
+      color: #ff8c5a;
+      margin-left: 8px;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, #262525 0%, #242323 100%);
+      border: 1px solid #3a3939;
+      border-radius: 18px;
+      color: #e8e8e8;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #ff6b39;
+      box-shadow: 0 0 0 2px rgba(255, 107, 57, 0.2);
+    }
+
+    button {
+      padding: 15px 25px;
+      background: linear-gradient(145deg, #ff6b39, #e55a2e);
+      color: white;
+      border: 1px solid #f78c5a;
+      border-radius: 18px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-bottom: 15px;
+      width: 100%;
+      font-size: 1rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      background: linear-gradient(145deg, #ff8c5a, #ff6b39);
+    }
+
+    .clear-button {
+      background: linear-gradient(145deg, #2b2a2a, #1f1e1e);
+      border: 1px solid #3d3c3c;
+      transition: all ease 0.4s;
+    }
+
+    .clear-button:hover {
+      background: linear-gradient(145deg, #383737, #292929);
+      border: 1px solid #464444;
+      box-shadow: 0 8px 10px rgba(43, 43, 43, 0.329);
+    }
+
+    /* Tooltip styling */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      width: 250px;
+      background: linear-gradient(90deg, #262525 0%, #242323 100%);
+      color: #e8e8e8;
+      text-align: center;
+      border-radius: 18px;
+      padding: 12px;
+      position: absolute;
+      z-index: 1001;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.8rem;
+      font-weight: normal;
+      border: 1px solid #3a3939;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* Arrow for tooltip */
+    .tooltip .tooltip-text::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #3a3939 transparent transparent transparent;
+    }
+
+    #cssOutput {
+      width: 100%;
+      height: 300px;
+      padding: 15px;
+      background: linear-gradient(90deg, #262525 0%, #242323 100%);
+      border: 1px solid #3a3939;
+      border-radius: 18px;
+      color: #ff8c5a;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      resize: vertical;
+    }
+
+    #cssOutput:focus {
+      outline: none;
+      border-color: #ff6b39;
+      box-shadow: 0 0 0 2px rgba(255, 107, 57, 0.2);
+    }
+
+    #selectedModuleDisplay {
+      min-height: 0;
+      transition: min-height 0.2s ease;
+    }
+    
+    #selectedModuleDisplay.has-content {
+      min-height: 60px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 20px;
+      color: #a0a0a0;
+      font-style: italic;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-content {
+      background: linear-gradient(180deg, #1b1a1a 0%, #191818 100%);
+      margin: 2% auto;
+      padding: 0;
+      border: 1px solid #2c2b2b;
+      border-radius: 35px;
+      width: 90%;
+      max-width: 1000px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 30px;
+      border-bottom: 1px solid #2c2b2b;
+      border-radius: 35px 35px 0 0;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: #ff8c5a;
+    }
+
+    .close {
+      font-size: 28px;
+      font-weight: bold;
+      color: #a0a0a0;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .close:hover {
+      color: #ff6b39;
+    }
+
+    .modal-body {
+      padding: 20px 30px 30px;
+    }
+
+    .config-section {
+      margin-bottom: 25px;
+      background: linear-gradient(90deg, #262525 0%, #242323 100%);
+      border: 1px solid #3a3939;
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .input-group-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 18px;
+      margin-top: 15px;
+    }
+
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 24px;
+    }
+
+    .module-card-grid {
+      background: linear-gradient(90deg, #262525 0%, #242323 100%);
+      border: 1px solid #3a3939;
+      border-radius: 18px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      height: 160px;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .module-card-grid:hover {
+      transform: translateY(-3px);
+      border-color: #ff6b39;
+      box-shadow: 0 10px 25px rgba(255, 107, 57, 0.25);
+    }
+
+    .module-icon {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+      color: #ff8c5a;
+      align-self: flex-start;
+    }
+
+    .module-title-grid {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #ff8c5a;
+      margin-bottom: 10px;
+      align-self: flex-start;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .module-desc {
+      font-size: 0.9rem;
+      color: #a0a0a0;
+      align-self: flex-start;
+      flex-grow: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    .module-card-content {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    ::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
+    
+    * {
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="logo-section">
+        <h1>FaceCG</h1>
+        <div class="subtitle">CSS Generator (beta)</div>
+      </div>
+
+      <div class="sidebar-content">
+        <div class="grid-item module-selector">
+          <h3><i class="fas fa-cogs"></i>Modules</h3>
+          <button onclick="openModuleModal()" style="width: 100%; padding-top: 20px; padding-bottom: 20px;">
+            Browse Modules
+          </button>
+          <div id="selectedModuleDisplay"></div>
+        </div>
+
+        <div class="grid-item module-controls">
+          <h3><i class="fas fa-sliders-h"></i>Tools</h3>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button class="clear-button" onclick="clearAllModules()">
+              Clear All
+            </button>
+            <div class="tooltip">
+              <button class="clear-button" onclick="createInstapack()">
+                Instapack
+              </button>
+              <span class="tooltip-text">Generate a Tpack zip</span>
+            </div>
+            <button class="clear-button" onclick="alert('ehhh i dont have time to make this work')">
+              Preview
+            </button>
+          </div>
+        </div>
+
+        <div class="grid-item output-area" style="flex: 1; display: flex; flex-direction: column;">
+          <h3><i class="fas fa-code"></i> Generated CSS</h3>
+          <textarea id="cssOutput" readonly
+            style="flex: 1; min-height: 200px; font-size: 0.85rem;">/* CSS will appear here */</textarea>
+          <button onclick="copyCSS()" style="margin-top: 12px; padding: 12px;">
+            <i class="fas fa-copy"></i> Copy CSS
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div id="moduleModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Select a Module</h2>
+            <span class="close" onclick="closeModuleModal()">&times;</span>
+          </div>
+          <div class="modal-body">
+            <div class="module-grid" id="moduleGrid">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="configModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="configModalTitle"><i class="fas fa-cog"></i> Configure Module</h2>
+            <span class="close" onclick="closeConfigModal()">&times;</span>
+          </div>
+          <div class="modal-body">
+            <div id="configModalContent">
+            </div>
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+              <button onclick="saveModuleConfig()" style="flex: 1;">
+                <i class="fas fa-save"></i> Save Changes
+              </button>
+              <button onclick="closeConfigModal()" class="clear-button" style="flex: 1;">
+                <i class="fas fa-times"></i> Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modules-container"
+        style="flex: 1 1 auto; display: flex; flex-direction: column; background: linear-gradient(180deg, #1b1a1a 0%, #191818 100%); border: 1px solid #2c2b2b; border-radius: 35px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); height: 100%; min-height: 0;">
+        <div
+          style="background: linear-gradient(90deg, #262525 0%, #242323 100%); border: 1px solid #3a3939; border-radius: 18px; padding: 15px; margin-bottom: 15px; display: flex; align-items: center;">
+          <h3 style="margin: 0; color: #e8e8e8; flex-shrink: 0; display: flex; align-items: center; gap: 10px;"><i
+              class="fas fa-list" style="color: #ff8c5a; font-size: 1.2rem;"></i> Active Modules</h3>
+        </div>
+        <div id="moduleContainer" style="display: none; text-align: center; padding: 20px;">
+          <div class="empty-state">No modules added yet</div>
+        </div>
+        <div id="activeModulesGrid" class="active-modules-grid"
+          style="flex: 1 1 auto; overflow-y: auto; margin-top: 15px; min-height: 0; max-height: 60vh; padding: 5px;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const FEATURE_CONFIG = {
+      crosshair: {
+        name: "Crosshair",
+        selector: ".Crosshair",
+        baseCss: "font-size: 0rem !important; background-repeat: no-repeat !important; background-size: contain !important;",
+        inputs: [
+          { label: "Image URL", type: "text", cssProp: "background-image", format: "url('{val}')" },
+          { label: "Size (rem)", type: "number", step: 0.1, cssProp: "width", suffix: "rem", extraCss: "height: {val}rem !important;" }
+        ]
+      },
+      adblock: {
+        name: "AdBlock",
+        selector: ".AdBannerContainer, .LoadingOverlayLeft, .LoadingOverlayRight .LoadingOverlayRightAdBannerContainer, .AdBannerContainer .SuperRankAdContainer",
+        baseCss: "opacity: 0 !important; width: 0rem !important; height: 0rem !important; pointer-events: none !important;",
+        inputs: []
+      },
+      chat: {
+        name: "Chat",
+        selector: ".Chat",
+        baseCss: "border-radius: 1rem !important;",
+        inputs: [
+          { label: "Background Color", type: "color", cssProp: "background-color" },
+          { label: "Max Height (rem)", type: "number", step: 0.1, cssProp: "max-height", suffix: "rem" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Gradient Angle", type: "range", min: 0, max: 360, cssProp: "background-image", gradientPart: "angle" },
+          { label: "Gradient Start Color", type: "color", cssProp: "background-image", gradientPart: "startColor" },
+          { label: "Gradient End Color", type: "color", cssProp: "background-image", gradientPart: "endColor" },
+          { label: "Shadow Horizontal Offset (px)", type: "range", min: -50, max: 50, cssProp: "box-shadow", shadowPart: "h" },
+          { label: "Shadow Vertical Offset (px)", type: "range", min: -50, max: 50, cssProp: "box-shadow", shadowPart: "v" },
+          { label: "Shadow Blur Radius (px)", type: "range", min: 0, max: 100, cssProp: "box-shadow", shadowPart: "blur" },
+          { label: "Shadow Color", type: "color", cssProp: "box-shadow", shadowPart: "color" },
+          { label: "Shadow Opacity", type: "range", min: 0, max: 1, step: 0.1, cssProp: "box-shadow", shadowPart: "alpha" }
+        ]
+      },
+      hotbar: {
+        name: "Hotbar Items",
+        selector: ".HotBarContainer .HotBar .HotBarGameItemsContainer .InvenItem",
+        baseCss: "border: 0rem solid transparent !important; border-radius: 0 !important; background-color: transparent !important; image-rendering: pixelated !important;",
+        inputs: [
+          { label: "Custom Item Frame (URL)", type: "text", cssProp: "background-image", format: "url('{val}')" },
+          { label: "Scale", type: "number", step: 0.1, cssProp: "transform", format: "scale({val})" }
+        ]
+      },
+      health: {
+        name: "Health Bar",
+        selector: ".HealthBar",
+        baseCss: "background-color: transparent !important; box-shadow: inset 0 .4rem 0 0 #ffffff10 !important;",
+        inputs: [
+          { label: "Background Image (URL)", type: "text", cssProp: "background-image", format: "url('{val}')" },
+          { label: "Gradient Angle", type: "range", min: 0, max: 360, cssProp: "background-image", gradientPart: "angle" },
+          { label: "Gradient Start Color", type: "color", cssProp: "background-image", gradientPart: "startColor" },
+          { label: "Gradient End Color", type: "color", cssProp: "background-image", gradientPart: "endColor" },
+          { label: "Hue Rotation (Change Color)", type: "range", min: 0, max: 360, cssProp: "filter", format: "hue-rotate({val}deg)" },
+          { label: "Shadow Horizontal Offset (px)", type: "range", min: -50, max: 50, cssProp: "box-shadow", shadowPart: "h" },
+          { label: "Shadow Vertical Offset (px)", type: "range", min: -50, max: 50, cssProp: "box-shadow", shadowPart: "v" },
+          { label: "Shadow Blur Radius (px)", type: "range", min: 0, max: 100, cssProp: "box-shadow", shadowPart: "blur" },
+          { label: "Shadow Color", type: "color", cssProp: "box-shadow", shadowPart: "color" },
+          { label: "Shadow Opacity", type: "range", min: 0, max: 1, step: 0.1, cssProp: "box-shadow", shadowPart: "alpha" }
+        ]
+      },
+      menu: {
+        name: "Main Menu",
+        selector: ".EverythingMenuContainer .EverythingMenu",
+        baseCss: "border-radius: 1rem !important; border: 1px solid #23ccffa6 !important;",
+        inputs: [
+          { label: "Background Image (URL)", type: "text", cssProp: "background-image", format: "url('{val}')" },
+          { label: "Gradient Angle", type: "range", min: 0, max: 360, cssProp: "background-image", gradientPart: "angle" },
+          { label: "Gradient Start Color", type: "color", cssProp: "background-image", gradientPart: "startColor" },
+          { label: "Gradient End Color", type: "color", cssProp: "background-image", gradientPart: "endColor" },
+          { label: "Shadow Horizontal Offset (px)", type: "range", min: -50, max: 50, cssProp: "box-shadow", shadowPart: "h" },
+          { label: "Shadow Vertical Offset (px)", type: "range", min: -50, max: 50, cssProp: "box-shadow", shadowPart: "v" },
+          { label: "Shadow Blur Radius (px)", type: "range", min: 0, max: 100, cssProp: "box-shadow", shadowPart: "blur" },
+          { label: "Shadow Color", type: "color", cssProp: "box-shadow", shadowPart: "color" },
+          { label: "Shadow Opacity", type: "range", min: 0, max: 1, step: 0.1, cssProp: "box-shadow", shadowPart: "alpha" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" }
+        ]
+      },
+      mobile: {
+        name: "Mobile Controls",
+        selector: ".TouchComponentsWrapper .TouchButton",
+        baseCss: "border-radius: 50% !important; backdrop-filter: blur(2px);",
+        inputs: [
+          { label: "Opacity", type: "range", min: 0, max: 1, step: 0.1, cssProp: "opacity" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Background Color", type: "color", cssProp: "background-color" },
+          { label: "Gradient Angle", type: "range", min: 0, max: 360, cssProp: "background-image", gradientPart: "angle" },
+          { label: "Gradient Start Color", type: "color", cssProp: "background-image", gradientPart: "startColor" },
+          { label: "Gradient End Color", type: "color", cssProp: "background-image", gradientPart: "endColor" },
+          { label: "Shadow Horizontal Offset (px)", type: "range", min: -50, max: 50, cssProp: "box-shadow", shadowPart: "h" },
+          { label: "Shadow Vertical Offset (px)", type: "range", min: -50, max: 50, cssProp: "box-shadow", shadowPart: "v" },
+          { label: "Shadow Blur Radius (px)", type: "range", min: 0, max: 100, cssProp: "box-shadow", shadowPart: "blur" },
+          { label: "Shadow Color", type: "color", cssProp: "box-shadow", shadowPart: "color" },
+          { label: "Shadow Opacity", type: "range", min: 0, max: 1, step: 0.1, cssProp: "box-shadow", shadowPart: "alpha" }
+        ]
+      },
+      newbutton: {
+        name: "New Button",
+        selector: ".NewButton",
+        baseCss: "border-radius: 0.5rem !important;",
+        inputs: [
+          { label: "Background Color", type: "color", cssProp: "background-color" },
+          { label: "Text Color", type: "color", cssProp: "color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Shadow Horizontal Offset (px)", type: "range", min: -50, max: 50, cssProp: "box-shadow", shadowPart: "h" },
+          { label: "Shadow Vertical Offset (px)", type: "range", min: -50, max: 50, cssProp: "box-shadow", shadowPart: "v" },
+          { label: "Shadow Blur Radius (px)", type: "range", min: 0, max: 100, cssProp: "box-shadow", shadowPart: "blur" },
+          { label: "Shadow Color", type: "color", cssProp: "box-shadow", shadowPart: "color" },
+          { label: "Shadow Opacity", type: "range", min: 0, max: 1, step: 0.1, cssProp: "box-shadow", shadowPart: "alpha" },
+          { label: "Gradient Angle", type: "range", min: 0, max: 360, cssProp: "background-image", gradientPart: "angle" },
+          { label: "Gradient Start Color", type: "color", cssProp: "background-image", gradientPart: "startColor" },
+          { label: "Gradient End Color", type: "color", cssProp: "background-image", gradientPart: "endColor" }
+        ]
+      },
+      mainmenutheme: {
+        name: "Main Menu Theme",
+        selector: ".EverythingMenuContainer .EverythingMenu",
+        baseCss: "box-shadow: 0 0 15px rgb(19 244 255 / 60%), inset 0 0 25px rgb(0 139 181 / 90%) !important; border-radius: 1rem !important; background-color: #00000000 !important; background-image: linear-gradient(198deg, #37d7ff4d 0%, #05215580 75%) !important; border: 1px solid #23ccffa6 !important;",
+        inputs: [
+          { label: "Main Color", type: "color", cssProp: "border-color", extraCss: "box-shadow: 0 0 15px {val}, inset 0 0 25px {val} !important;" },
+          { label: "Background Gradient", type: "text", cssProp: "background-image", placeholder: "linear-gradient(198deg, #37d7ff4d 0%, #05215580 75%)" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Shadow Effect", type: "text", cssProp: "box-shadow", placeholder: "0 0 15px rgb(19 244 255 / 60%), inset 0 0 25px rgb(0 139 181 / 90%)" }
+        ]
+      },
+      settingstheme: {
+        name: "Settings Theme",
+        selector: ".SettingsMenu, .SettingsMenuLeft, .SettingBox",
+        baseCss: "background-color: #00000000 !important; border: 1px solid #23b3d3; border-radius: 1rem; background-image: linear-gradient(120deg, #34baff36 0%, #00234785 75%) !important; box-shadow: 0 0 15px rgb(0 28 37 / 60%) !important;",
+        inputs: [
+          { label: "Background Gradient", type: "text", cssProp: "background-image", placeholder: "linear-gradient(120deg, #34baff36 0%, #00234785 75%)" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Shadow Effect", type: "text", cssProp: "box-shadow", placeholder: "0 0 15px rgb(0 28 37 / 60%)" }
+        ]
+      },
+      buttontheme: {
+        name: "Button Theme",
+        selector: ".NewButton, .BlueButton, .RedButton, .GoldButton",
+        baseCss: "border-radius: 1rem !important; background-color: #00000000 !important; border: 1px solid #24b8c7; background-image: linear-gradient(174deg, #13b5dd73 0%, #13347054 75%);",
+        inputs: [
+          { label: "Background Gradient", type: "text", cssProp: "background-image", placeholder: "linear-gradient(174deg, #13b5dd73 0%, #13347054 75%)" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Shadow Effect", type: "text", cssProp: "box-shadow", placeholder: "0 0 10px rgba(0,0,0,0.3)" },
+          { label: "Text Color", type: "color", cssProp: "color" }
+        ]
+      },
+      socialbartheme: {
+        name: "Social Bar Theme",
+        selector: ".SocialBarContainer .SocialBarOuter .SocialBar .CondensedSocialBarInner .CondensedSectionsContainer .CondensedSections, .SocialBarContainer .SocialBarOuter .SocialBar .SocialBarInner .SocialBarFooter",
+        baseCss: "box-shadow: 0 0 15px rgba(19, 243, 255, 0.356), inset 0 0 25px rgba(0, 139, 181, 0.521) !important; border-radius: 1rem !important; background-color: #00000000 !important; background-image: linear-gradient(198deg, #37d7ff23 0%, #05215538 75%) !important; border: 1px solid #23ccff52 !important;",
+        inputs: [
+          { label: "Background Gradient", type: "text", cssProp: "background-image", placeholder: "linear-gradient(198deg, #37d7ff23 0%, #05215538 75%)" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Shadow Effect", type: "text", cssProp: "box-shadow", placeholder: "0 0 15px rgba(19, 243, 255, 0.356), inset 0 0 25px rgba(0, 139, 181, 0.521)" }
+        ]
+      },
+      inputtheme: {
+        name: "Input Theme",
+        selector: ".TextInput, .JoinLobbyInput, .LabeledInput .TextInput",
+        baseCss: "box-shadow: 0 0 10px rgba(3, 77, 102, 0.644) !important; border-radius: 1rem !important; background-color: #00000000 !important; background-image: linear-gradient(174deg, #2352ad38 0%, #00000038 75%) !important; border: 1px solid #23ccffa6 !important;",
+        inputs: [
+          { label: "Background Gradient", type: "text", cssProp: "background-image", placeholder: "linear-gradient(174deg, #2352ad38 0%, #00000038 75%)" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Shadow Effect", type: "text", cssProp: "box-shadow", placeholder: "0 0 10px rgba(3, 77, 102, 0.644)" },
+          { label: "Text Color", type: "color", cssProp: "color" }
+        ]
+      },
+      inventorytheme: {
+        name: "Inventory Theme",
+        selector: ".InventoryWrapper .Inventory .InvenBody .InvenBodyRight, .InventoryWrapper .Inventory .InvenBody .InvenLeftSide",
+        baseCss: "background-color: #12374d59 !important; border: 1px solid #00ffff82 !important; border-radius: 0 !important; box-shadow: 0 0 25px rgb(31 155 161 / 67%) !important;",
+        inputs: [
+          { label: "Background Color", type: "color", cssProp: "background-color" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Shadow Effect", type: "text", cssProp: "box-shadow", placeholder: "0 0 25px rgb(31 155 161 / 67%)" },
+          { label: "Background Gradient", type: "text", cssProp: "background-image", placeholder: "linear-gradient(45deg, #12374d59, #000000)" }
+        ]
+      },
+      shoptheme: {
+        name: "Shop Theme",
+        selector: ".ShopBody, .ShopItem",
+        baseCss: "background-color: #00000000 !important; background-image: linear-gradient(174deg, #00728fe0 0%, #000a1c80 75%) !important; border: 1px solid #23b9ffa6 !important; box-shadow: 0 0 25px rgb(31 155 161 / 67%) !important; border-radius: 1rem !important;",
+        inputs: [
+          { label: "Background Gradient", type: "text", cssProp: "background-image", placeholder: "linear-gradient(174deg, #00728fe0 0%, #000a1c80 75%)" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Shadow Effect", type: "text", cssProp: "box-shadow", placeholder: "0 0 25px rgb(31 155 161 / 67%)" },
+          { label: "Text Color", type: "color", cssProp: "color" }
+        ]
+      },
+      chartheme: {
+        name: "Character Theme",
+        selector: ".CharCustomisation, .CharCustomisationBody .CharCustomisationBodyInner .CharCustomisPartSelectorWrapper .CharCustomPartWrapper",
+        baseCss: "box-shadow: 0 0 15px rgb(19 244 255 / 60%), inset 0 0 25px rgb(0 139 181 / 90%) !important; border-radius: 1rem !important; background-color: #00000000 !important; background-image: linear-gradient(198deg, #37d7ff4d 0%, #05215580 75%) !important; border: 1px solid #23ccffa6 !important;",
+        inputs: [
+          { label: "Gradient Angle", type: "range", min: 0, max: 360, cssProp: "background-image", gradientPart: "angle" },
+          { label: "Gradient Start Color", type: "color", cssProp: "background-image", gradientPart: "startColor" },
+          { label: "Gradient End Color", type: "color", cssProp: "background-image", gradientPart: "endColor" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Shadow Horizontal Offset (px)", type: "range", min: -50, max: 50, cssProp: "box-shadow", shadowPart: "h" },
+          { label: "Shadow Vertical Offset (px)", type: "range", min: -50, max: 50, cssProp: "box-shadow", shadowPart: "v" },
+          { label: "Shadow Blur Radius (px)", type: "range", min: 0, max: 100, cssProp: "box-shadow", shadowPart: "blur" },
+          { label: "Shadow Color", type: "color", cssProp: "box-shadow", shadowPart: "color" },
+          { label: "Shadow Opacity", type: "range", min: 0, max: 1, step: 0.1, cssProp: "box-shadow", shadowPart: "alpha" }
+        ]
+      },
+      loadertheme: {
+        name: "Loader Theme",
+        selector: ".LogoLoader .LogoLoaderInner, .LogoLoader.LogoLoaderLoading .LogoLoaderOuter",
+        baseCss: "border-radius: 10rem !important; background-size: contain !important; background-repeat: no-repeat !important; background-image: linear-gradient(347deg, #25deffc4 0%, #15181a80 70%) !important; border: 0px solid #00000000 !important; box-shadow: 0 0 25px rgb(0 243 255), inset 0 0 25px rgba(22, 201, 255, 0.9) !important;",
+        inputs: [
+          { label: "Background Gradient", type: "text", cssProp: "background-image", placeholder: "linear-gradient(347deg, #25deffc4 0%, #15181a80 70%)" },
+          { label: "Shadow Effect", type: "text", cssProp: "box-shadow", placeholder: "0 0 25px rgb(0 243 255), inset 0 0 25px rgba(22, 201, 255, 0.9)" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" }
+        ]
+      },
+      ingameheadertheme: {
+        name: "In-Game Header Theme",
+        selector: ".InGameHeaderContainer .InGameHeader",
+        baseCss: "background-color: #00000000 !important; border: 0px solid #00000000 !important; gap: .25rem !important; padding: 0 0.5rem 0 0rem !important;",
+        inputs: [
+          { label: "Background Color", type: "color", cssProp: "background-color" },
+          { label: "Gap (rem)", type: "number", step: 0.1, cssProp: "gap", suffix: "rem" },
+          { label: "Padding (rem)", type: "number", step: 0.1, cssProp: "padding", suffix: "rem" }
+        ]
+      },
+      uirequeststheme: {
+        name: "UI Requests Theme",
+        selector: ".UiRequests .UiRequestContainer .UiRequest .UiRequestInner",
+        baseCss: "background-image: linear-gradient(174deg, #0fa9e999 0%, #00375f63 75%) !important; border: 1px solid #23ccffa6 !important; border-radius: 1rem !important; box-shadow: 0 0 15px rgba(19, 243, 255, 0.356), inset 0 0 25px rgba(0, 139, 181, 0.521) !important; background-color: #00000000 !important;",
+        inputs: [
+          { label: "Background Gradient", type: "text", cssProp: "background-image", placeholder: "linear-gradient(174deg, #0fa9e999 0%, #00375f63 75%)" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Shadow Effect", type: "text", cssProp: "box-shadow", placeholder: "0 0 15px rgba(19, 243, 255, 0.356), inset 0 0 25px rgba(0, 139, 181, 0.521)" }
+        ]
+      },
+      hotbartheme: {
+        name: "Hotbar Theme",
+        selector: ".HotBarContainer .HotBar .HotBarGameItemsContainer .InvenItem, .HotBarItem",
+        baseCss: "background-image: url(https://iili.io/Fr1lnLv.png) !important; border: 0rem solid #00000000 !important; border-radius: 0 !important; background-repeat: no-repeat !important; background-size: contain !important; image-rendering: pixelated !important; outline: 0px solid #00000000 !important; background-color: #00000000;",
+        inputs: [
+          { label: "Background Image (URL)", type: "text", cssProp: "background-image", format: "url('{val}')" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Background Color", type: "color", cssProp: "background-color" }
+        ]
+      },
+      crosshairtheme: {
+        name: "Crosshair Theme",
+        selector: ".Crosshair",
+        baseCss: "background-image: url('https://iili.io/FrX6HIp.png') !important; font-size: 0rem !important; font-weight: 0 !important; background-size: contain !important; background-repeat: no-repeat !important;",
+        inputs: [
+          { label: "Crosshair Image (URL)", type: "text", cssProp: "background-image", format: "url('{val}')" },
+          { label: "Size (rem)", type: "number", step: 0.1, cssProp: "font-size", suffix: "rem" }
+        ]
+      },
+      chatmessagestheme: {
+        name: "Chat Messages Theme",
+        selector: ".Chat .ChatMessages .MessageWrapper, .MessageWrapper.ChatMsgSelectWrapper",
+        baseCss: "background-color: #00000000 !important; font-size: 0.8rem; color: #ffd51a !important; padding: .12rem .4rem !important; opacity: 0.5;",
+        inputs: [
+          { label: "Background Color", type: "color", cssProp: "background-color" },
+          { label: "Text Color", type: "color", cssProp: "color" },
+          { label: "Font Size (rem)", type: "number", step: 0.1, cssProp: "font-size", suffix: "rem" },
+          { label: "Opacity", type: "range", min: 0, max: 1, step: 0.1, cssProp: "opacity" },
+          { label: "Padding (rem)", type: "number", step: 0.1, cssProp: "padding", suffix: "rem" }
+        ]
+      },
+      fpstheme: {
+        name: "FPS Display Theme",
+        selector: ".FpsWrapperDiv",
+        baseCss: "background-color: #00000000 !important;",
+        inputs: [
+          { label: "Background Color", type: "color", cssProp: "background-color" },
+          { label: "Text Color", type: "color", cssProp: "color" }
+        ]
+      },
+      coordinatetheme: {
+        name: "Coordinate UI Theme",
+        selector: ".CoordinateUI",
+        baseCss: "background-color: #0000002e !important; border-radius: 1rem !important;",
+        inputs: [
+          { label: "Background Color", type: "color", cssProp: "background-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Text Color", type: "color", cssProp: "color" }
+        ]
+      },
+      homepagebgtheme: {
+        name: "Home Page BG Theme",
+        selector: ".HomePageInner, .HomePageBackgroundContainer",
+        baseCss: "background-image: url('https://iili.io/FUpAoCB.jpg') !important; background-size: cover !important; background-repeat: no-repeat !important; background-position: center !important;",
+        inputs: [
+          { label: "Background Image (URL)", type: "text", cssProp: "background-image", format: "url('{val}')" },
+          { label: "Background Size", type: "text", cssProp: "background-size", placeholder: "cover" },
+          { label: "Background Repeat", type: "text", cssProp: "background-repeat", placeholder: "no-repeat" }
+        ]
+      },
+      texturepacktheme: {
+        name: "Texture Pack Theme",
+        selector: ".TexturePackCategory .TexturePackList, .TexturePackCategory .TexturePack",
+        baseCss: "grid-template-columns: repeat(2, 1fr) !important; gap: 7px !important; border: 2px solid #00a1ff4f !important; box-shadow: 0 0 BLACK !important; aspect-ratio: 5 / 1 !important; border-radius: 1rem !important;",
+        inputs: [
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Shadow Effect", type: "text", cssProp: "box-shadow", placeholder: "0 0 BLACK" },
+          { label: "Gap (px)", type: "number", cssProp: "gap", suffix: "px" }
+        ]
+      },
+      everythingmenu: {
+        name: "Everything Menu",
+        selector: ".EverythingMenuContainer .EverythingMenu",
+        baseCss: "box-shadow: 0 0 15px rgb(19 244 255 / 60%), inset 0 0 25px rgb(0 139 181 / 90%) !important; border-radius: 1rem !important; background-color: #00000000 !important; background-image: linear-gradient(198deg, #37d7ff4d 0%, #05215580 75%) !important; border: 1px solid #23ccffa6 !important;",
+        inputs: [
+          { label: "Gradient Angle", type: "range", min: 0, max: 360, cssProp: "background-image", gradientPart: "angle" },
+          { label: "Gradient Start Color", type: "color", cssProp: "background-image", gradientPart: "startColor" },
+          { label: "Gradient End Color", type: "color", cssProp: "background-image", gradientPart: "endColor" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" }
+        ]
+      },
+      settingsmenuright: {
+        name: "Settings Menu Right",
+        selector: ".SettingsMenuRightInner .SettingBox",
+        baseCss: "box-shadow: 0 0 15px rgb(0 28 37 / 60%) !important; border-radius: 1rem !important; background-color: #00000000 !important; background-image: linear-gradient(174deg, #2352ad38 0%, #00000038 75%) !important; border: 1px solid #23ccffa6 !important;",
+        inputs: [
+          { label: "Background Gradient", type: "text", cssProp: "background-image", placeholder: "linear-gradient(174deg, #2352ad38 0%, #00000038 75%)" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Shadow Effect", type: "text", cssProp: "box-shadow", placeholder: "0 0 15px rgb(0 28 37 / 60%)" }
+        ]
+      },
+      menucontainer: {
+        name: "Menu Container",
+        selector: ".Menu .MenuSideBar .MenuSideBarBody .MenuSideBarBodyTab",
+        baseCss: "border: 0px solid #00000000 !important; background-repeat: no-repeat !important; background-size: contain !important; filter: brightness(0.75);",
+        inputs: [
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Brightness Adjustment (%)", type: "range", min: 0, max: 200, step: 10, cssProp: "filter", format: "brightness({val}%)" },
+          { label: "Background Image (URL)", type: "text", cssProp: "background-image", format: "url('{val}')" }
+        ]
+      },
+      likebutton: {
+        name: "Like Button",
+        selector: ".LikeButton",
+        baseCss: "border-radius: 0.7rem !important; background-image: linear-gradient(198deg, #ff32329c 0%, #7800008c 75% 75%) !important; border: 1px solid #ff232352 !important;",
+        inputs: [
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Gradient Angle", type: "range", min: 0, max: 360, cssProp: "background-image", gradientPart: "angle" },
+          { label: "Gradient Start Color", type: "color", cssProp: "background-image", gradientPart: "startColor" },
+          { label: "Gradient End Color", type: "color", cssProp: "background-image", gradientPart: "endColor" }
+        ]
+      },
+      uirequest: {
+        name: "UI Requests",
+        selector: ".UiRequests .UiRequestContainer .UiRequest .UiRequestInner",
+        baseCss: "background-image: linear-gradient(174deg, #0fa9e999 0%, #00375f63 75%) !important; border: 1px solid #23ccffa6 !important; border-radius: 1rem !important; box-shadow: 0 0 15px rgba(19, 243, 255, 0.356), inset 0 0 25px rgba(0, 139, 181, 0.521) !important; background-color: #00000000 !important;",
+        inputs: [
+          { label: "Background Gradient", type: "text", cssProp: "background-image", placeholder: "linear-gradient(174deg, #0fa9e999 0%, #00375f63 75%)" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Shadow Effect", type: "text", cssProp: "box-shadow", placeholder: "0 0 15px rgba(19, 243, 255, 0.356)" }
+        ]
+      },
+      aurabar: {
+        name: "Aura Bar",
+        selector: ".AuraBarWrapper .AuraBar",
+        baseCss: "background-color: #22313b !important; border: 2px solid #0ea9c2 !important; height: 60% !important; border-radius: 0.5rem !important;",
+        inputs: [
+          { label: "Background Color", type: "color", cssProp: "background-color" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Border Width (px)", type: "number", step: 1, cssProp: "border-width", suffix: "px" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Height (%)", type: "range", min: 10, max: 100, cssProp: "height", suffix: "%" }
+        ]
+      },
+      enchanting: {
+        name: "Enchanting Table",
+        selector: ".EnchantingTable .EnchantingTableBody .EnchantingTableLeft .PossibleEnchantments",
+        baseCss: "background-color: #00000000 !important; border: 1px solid #23ccffa6 !important; border-radius: 1rem !important;",
+        inputs: [
+          { label: "Background Color", type: "color", cssProp: "background-color" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Title Text Color", type: "color", cssProp: "color" }
+        ]
+      },
+      schematic: {
+        name: "Schematic",
+        selector: ".SchematicListContainer, .SchematicThumbnail, .SchematicName",
+        baseCss: "box-shadow: 0 0 10px rgba(3, 77, 102, 0.644) !important; border-radius: 1rem !important; background-color: #00000000 !important; background-image: linear-gradient(174deg, #2352ad38 0%, #00000038 75%) !important; border: 1px solid #23ccffa6 !important;",
+        inputs: [
+          { label: "Background Gradient", type: "text", cssProp: "background-image", placeholder: "linear-gradient(174deg, #2352ad38 0%, #00000038 75%)" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Shadow Effect", type: "text", cssProp: "box-shadow", placeholder: "0 0 10px rgba(3, 77, 102, 0.644)" }
+        ]
+      },
+      customgame: {
+        name: "Custom Game",
+        selector: ".CustomGameListContainer, .CustomGameListInner",
+        baseCss: "background-color: #0e182d82 !important; border-radius: 1rem !important; padding: 1rem !important;",
+        inputs: [
+          { label: "Background Color", type: "color", cssProp: "background-color" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Padding (rem)", type: "number", step: 0.1, cssProp: "padding", suffix: "rem" },
+          { label: "Border Color", type: "color", cssProp: "border-color" }
+        ]
+      },
+      leaderboard: {
+        name: "Leaderboard",
+        selector: ".LobbyLeaderboardMenu .LobbyLeaderboardContainer .LobbyLeaderboard",
+        baseCss: "border-radius: 1rem !important; background-color: #00000000 !important; border: 0px solid #00000000 !important; background-image: linear-gradient(156deg, #0bb3c963 0%, #001e573f 75%) !important;",
+        inputs: [
+          { label: "Background Gradient", type: "text", cssProp: "background-image", placeholder: "linear-gradient(156deg, #0bb3c963 0%, #001e573f 75%)" },
+          { label: "Border Radius (rem)", type: "number", step: 0.1, cssProp: "border-radius", suffix: "rem" },
+          { label: "Border Color", type: "color", cssProp: "border-color" },
+          { label: "Text Color", type: "color", cssProp: "color" }
+        ]
+      }
+    };
+
+    const container = document.getElementById('moduleContainer');
+    const activeModulesGrid = document.getElementById('activeModulesGrid');
+    let activeModules = [];
+    let selectedModuleType = null;
+    let currentEditingModule = null;
+
+    function addModule() {
+      const type = selectedModuleType;
+
+      if (!type) {
+        alert('Please select a module');
+        return;
+      }
+
+      const config = FEATURE_CONFIG[type];
+      const uniqueId = Date.now();
+
+      const moduleData = {
+        id: uniqueId,
+        type: type,
+        values: {}
+      };
+
+      config.inputs.forEach((input, index) => {
+        const defaultValue = input.defaultValue || (input.min ? input.min : 0);
+        moduleData.values[index] = defaultValue;
+      });
+
+      activeModules.push(moduleData);
+
+      const displayElement = document.getElementById('selectedModuleDisplay');
+      displayElement.innerHTML = '';
+      displayElement.classList.remove('has-content');
+      selectedModuleType = null;
+
+      renderActiveModulesGrid();
+      generateCSS();
+    }
+
+    function removeModule(id) {
+      activeModules = activeModules.filter(m => m.id !== id);
+      renderActiveModulesGrid();
+      generateCSS();
+    }
+
+    function clearAllModules() {
+      activeModules = [];
+      renderActiveModulesGrid();
+      generateCSS();
+      
+      const displayElement = document.getElementById('selectedModuleDisplay');
+      displayElement.innerHTML = '';
+      displayElement.classList.remove('has-content');
+    }
+
+
+    function updateValue(valueId, newValue) {
+      const valueElement = document.getElementById(valueId);
+      if (valueElement) {
+        valueElement.textContent = newValue;
+      }
+    }
+
+    function hexToRgb(hex) {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    }
+
+    function renderActiveModulesGrid() {
+      const emptyState = document.querySelector('.empty-state');
+      if (activeModules.length === 0) {
+        if (emptyState) emptyState.style.display = 'block';
+        activeModulesGrid.style.display = 'none';
+        return;
+      }
+
+      if (emptyState) emptyState.style.display = 'none';
+      activeModulesGrid.style.display = 'grid';
+
+      activeModulesGrid.innerHTML = '';
+
+      activeModules.forEach(moduleData => {
+        const config = FEATURE_CONFIG[moduleData.type];
+        const card = document.createElement('div');
+        card.className = 'active-module-card';
+
+        const iconMap = {
+          crosshair: 'fas fa-crosshairs',
+          adblock: 'fas fa-ban',
+          chat: 'fas fa-comments',
+          hotbar: 'fas fa-th',
+          health: 'fas fa-heart',
+          menu: 'fas fa-home',
+          mobile: 'fas fa-mobile-alt',
+          newbutton: 'fas fa-dot-circle',
+          mainmenutheme: 'fas fa-home',
+          settingstheme: 'fas fa-cog',
+          buttontheme: 'fas fa-dot-circle',
+          socialbartheme: 'fas fa-users',
+          inputtheme: 'fas fa-keyboard',
+          inventorytheme: 'fas fa-backpack',
+          shoptheme: 'fas fa-shopping-cart',
+          chartheme: 'fas fa-user',
+          loadertheme: 'fas fa-spinner',
+          ingameheadertheme: 'fas fa-heading',
+          uirequeststheme: 'fas fa-envelope',
+          hotbartheme: 'fas fa-th',
+          crosshairtheme: 'fas fa-crosshairs',
+          chatmessagestheme: 'fas fa-comment',
+          fpstheme: 'fas fa-tachometer-alt',
+          coordinatetheme: 'fas fa-map-marker-alt',
+          homepagebgtheme: 'fas fa-image',
+          texturepacktheme: 'fas fa-paint-brush',
+          everythingmenu: 'fas fa-list',
+          settingsmenuright: 'fas fa-cog',
+          menucontainer: 'fas fa-home',
+          likebutton: 'fas fa-thumbs-up',
+          uirequest: 'fas fa-envelope',
+          aurabar: 'fas fa-wind',
+          enchanting: 'fas fa-magic',
+          schematic: 'fas fa-project-diagram',
+          customgame: 'fas fa-gamepad',
+          leaderboard: 'fas fa-trophy'
+        };
+
+        const iconClass = iconMap[moduleData.type] || 'fas fa-cog';
+        const cleanName = config.name.replace(/^[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F018}-\u{1F270}]+\s*/u, '');
+
+        card.innerHTML = `
+          <div class="active-module-icon">
+            <i class="${iconClass}"></i>
+          </div>
+          <div class="active-module-name">${cleanName}</div>
+          <div class="active-module-controls">
+            <button class="config-btn" onclick="openConfigModal(${moduleData.id})">
+              <i class="fas fa-cog"></i> 
+            </button>
+            <button class="config-btn" onclick="removeModule(${moduleData.id})" style="color: #ff4757;">
+              <i class="fas fa-trash"></i> 
+            </button>
+          </div>
+        `;
+
+        activeModulesGrid.appendChild(card);
+      });
+    }
+
+    function openConfigModal(moduleId) {
+      const moduleData = activeModules.find(m => m.id === moduleId);
+      if (!moduleData) return;
+
+      currentEditingModule = moduleData;
+      const config = FEATURE_CONFIG[moduleData.type];
+
+      const cleanName = config.name.replace(/^[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F018}-\u{1F270}]+\s*/u, '');
+      document.getElementById('configModalTitle').innerHTML = `<i class="fas fa-cog"></i> Configure ${cleanName}`;
+
+      let formHtml = '';
+
+      if (config.inputs.length === 0) {
+        formHtml = '<p style="font-size:0.9rem; color:#888; margin: 10px 0;">This module is enabled, no configuration needed.</p>';
+      } else {
+        const colorInputs = [];
+        const sizeInputs = [];
+        const shadowInputs = [];
+        const gradientInputs = [];
+        const otherInputs = [];
+
+        config.inputs.forEach((input, index) => {
+          const currentValue = moduleData.values[index] || (input.defaultValue || (input.min ? input.min : 0));
+          const inputId = `config-input-${moduleId}-${index}`;
+          const valueId = `config-value-${moduleId}-${index}`;
+
+          const inputElement = `
+            <div class="input-group">
+              <label for="${inputId}">${input.label}</label>
+              <input 
+                id="${inputId}"
+                type="${input.type}" 
+                data-index="${index}" 
+                placeholder="${input.placeholder || ''}"
+                value="${currentValue}"
+                ${input.step ? `step="${input.step}"` : ''}
+                ${input.min ? `min="${input.min}"` : ''}
+                ${input.max ? `max="${input.max}"` : ''}
+                oninput="updateConfigValue('${valueId}', this.value)"
+              >
+              ${input.type === 'range' ? `<span id="${valueId}" class="value-display">${currentValue}</span>` : ''}
+            </div>
+          `;
+
+          const labelLower = input.label.toLowerCase();
+          if (labelLower.includes('color') || labelLower.includes('background') || labelLower.includes('text') || labelLower.includes('border')) {
+            colorInputs.push(inputElement);
+          } else if (labelLower.includes('size') || labelLower.includes('height') || labelLower.includes('width') ||
+            labelLower.includes('radius') || labelLower.includes('padding') || labelLower.includes('gap') ||
+            labelLower.includes('border width')) {
+            sizeInputs.push(inputElement);
+          } else if (labelLower.includes('shadow')) {
+            shadowInputs.push(inputElement);
+          } else if (labelLower.includes('gradient')) {
+            gradientInputs.push(inputElement);
+          } else {
+            otherInputs.push(inputElement);
+          }
+        });
+
+        let sectionCount = 0;
+        const totalSections = [colorInputs, sizeInputs, shadowInputs, gradientInputs, otherInputs].filter(arr => arr.length > 0).length;
+
+        if (colorInputs.length > 0) {
+          formHtml += `
+          <div class="config-section ${totalSections > 1 ? 'section-column' : ''}">
+            <h3 style="margin: 0 0 15px 0; color: #ff8c5a; font-size: 1.1rem; border-bottom: 1px solid #3a3939; padding-bottom: 8px; display: flex; align-items: center; font-weight: 600;">
+              <i class="fas fa-palette" style="margin-right: 10px;"></i> Color Settings
+            </h3>
+            <div class="input-group-container">
+              ${colorInputs.join('')}
+            </div>
+          </div>`;
+          sectionCount++;
+        }
+
+        if (sizeInputs.length > 0) {
+          formHtml += `
+          <div class="config-section ${totalSections > 1 ? 'section-column' : ''}">
+            <h3 style="margin: 0 0 15px 0; color: #ff8c5a; font-size: 1.1rem; border-bottom: 1px solid #3a3939; padding-bottom: 8px; display: flex; align-items: center; font-weight: 600;">
+              <i class="fas fa-ruler" style="margin-right: 10px;"></i> Size & Spacing
+            </h3>
+            <div class="input-group-container">
+              ${sizeInputs.join('')}
+            </div>
+          </div>`;
+          sectionCount++;
+        }
+
+        if (shadowInputs.length > 0) {
+          formHtml += `
+          <div class="config-section ${totalSections > 1 ? 'section-column' : ''}">
+            <h3 style="margin: 0 0 15px 0; color: #ff8c5a; font-size: 1.1rem; border-bottom: 1px solid #3a3939; padding-bottom: 8px; display: flex; align-items: center; font-weight: 600;">
+              <i class="fas fa-moon" style="margin-right: 10px;"></i> Shadow Effects
+            </h3>
+            <div class="input-group-container">
+              ${shadowInputs.join('')}
+            </div>
+          </div>`;
+          sectionCount++;
+        }
+
+        if (gradientInputs.length > 0) {
+          formHtml += `
+          <div class="config-section ${totalSections > 1 ? 'section-column' : ''}">
+            <h3 style="margin: 0 0 15px 0; color: #ff8c5a; font-size: 1.1rem; border-bottom: 1px solid #3a3939; padding-bottom: 8px; display: flex; align-items: center; font-weight: 600;">
+              <i class="fas fa-fill-drip" style="margin-right: 10px;"></i> Gradient Settings
+            </h3>
+            <div class="input-group-container">
+              ${gradientInputs.join('')}
+            </div>
+          </div>`;
+          sectionCount++;
+        }
+
+        if (otherInputs.length > 0) {
+          formHtml += `
+          <div class="config-section ${totalSections > 1 ? 'section-column' : ''}">
+            <h3 style="margin: 0 0 15px 0; color: #ff8c5a; font-size: 1.1rem; border-bottom: 1px solid #3a3939; padding-bottom: 8px; display: flex; align-items: center; font-weight: 600;">
+              <i class="fas fa-sliders-h" style="margin-right: 10px;"></i> Other Settings
+            </h3>
+            <div class="input-group-container">
+              ${otherInputs.join('')}
+            </div>
+          </div>`;
+          sectionCount++;
+        }
+      }
+
+      document.getElementById('configModalContent').innerHTML = formHtml;
+      document.getElementById('configModal').style.display = 'block';
+    }
+
+    function closeConfigModal() {
+      document.getElementById('configModal').style.display = 'none';
+      currentEditingModule = null;
+    }
+
+    function updateConfigValue(valueId, newValue) {
+      const valueElement = document.getElementById(valueId);
+      if (valueElement) {
+        valueElement.textContent = newValue;
+      }
+    }
+
+    function saveModuleConfig() {
+      if (!currentEditingModule) return;
+
+      const config = FEATURE_CONFIG[currentEditingModule.type];
+      const inputs = document.querySelectorAll('#configModalContent input');
+
+      // Update module values
+      inputs.forEach(input => {
+        const index = input.dataset.index;
+        currentEditingModule.values[index] = input.value;
+      });
+
+      closeConfigModal();
+      generateCSS();
+
+      // Show success message
+      const saveBtn = document.querySelector('#configModal .modal-body button:first-child');
+      const originalText = saveBtn.innerHTML;
+      saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+      saveBtn.style.background = 'linear-gradient(145deg, #4CAF50, #45a049)';
+      setTimeout(() => {
+        saveBtn.innerHTML = originalText;
+        saveBtn.style.background = '';
+      }, 1500);
+    }
+
+    function generateCSS() {
+      let fullCss = "/* Generated by FaceCG */\n";
+
+      activeModules.forEach(moduleData => {
+        const config = FEATURE_CONFIG[moduleData.type];
+
+        let properties = [];
+        if (config.baseCss) properties.push(config.baseCss);
+
+        let rgbValues = {};
+        let gradientValues = {};
+        let shadowValues = {};
+
+        Object.keys(moduleData.values).forEach(index => {
+          const val = moduleData.values[index];
+          if (val !== undefined && val !== '') {
+            const def = config.inputs[index];
+            let finalValue = val;
+
+            if (def.rgbPart) {
+              rgbValues[def.cssProp] = rgbValues[def.cssProp] || {};
+              rgbValues[def.cssProp][def.rgbPart] = val;
+            } else if (def.gradientPart) {
+              gradientValues[def.cssProp] = gradientValues[def.cssProp] || {};
+              gradientValues[def.cssProp][def.gradientPart] = val;
+            } else if (def.shadowPart) {
+              shadowValues[def.cssProp] = shadowValues[def.cssProp] || {};
+              shadowValues[def.cssProp][def.shadowPart] = val;
+            } else {
+              if (def.format) {
+                finalValue = def.format.replace('{val}', val);
+              } else if (def.suffix) {
+                finalValue = val + def.suffix;
+              }
+
+              if (def.extraCss) {
+                const extra = def.extraCss.replace('{val}', val);
+                properties.push(extra);
+              }
+
+              properties.push(`${def.cssProp}: ${finalValue} !important;`);
+            }
+          }
+        });
+
+        for (const prop in rgbValues) {
+          const rgb = rgbValues[prop];
+          const r = rgb.r || 0;
+          const g = rgb.g || 0;
+          const b = rgb.b || 0;
+          properties.push(`${prop}: rgb(${r}, ${g}, ${b}) !important;`);
+        }
+
+        for (const prop in gradientValues) {
+          const grad = gradientValues[prop];
+          const angle = grad.angle || 0;
+          const startColor = grad.startColor || '#ffffff';
+          const endColor = grad.endColor || '#000000';
+          properties.push(`${prop}: linear-gradient(${angle}deg, ${startColor}, ${endColor}) !important;`);
+        }
+
+        for (const prop in shadowValues) {
+          const shadow = shadowValues[prop];
+          const h = shadow.h || 0;
+          const v = shadow.v || 0;
+          const blur = shadow.blur || 0;
+          const color = shadow.color || '#000000';
+          const alpha = shadow.alpha || 1;
+          const rgb = hexToRgb(color);
+          if (rgb) {
+            properties.push(`${prop}: ${h}px ${v}px ${blur}px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha}) !important;`);
+          }
+        }
+
+        fullCss += `
+${config.selector} {
+    ${properties.join('\n    ')}
+}
+`;
+      });
+
+      document.getElementById('cssOutput').value = fullCss;
+    }
+
+    function copyCSS() {
+      const copyText = document.getElementById("cssOutput");
+      if (copyText.value === "/* CSS will appear here */") {
+        alert('Please add a module first!');
+        return;
+      }
+      copyText.select();
+      document.execCommand("copy");
+
+      const copyBtn = document.querySelector('.output-area button');
+      const originalText = copyBtn.innerHTML;
+      copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(() => {
+        copyBtn.innerHTML = originalText;
+      }, 2000);
+    }
+
+    function createInstapack() {
+      const cssContent = document.getElementById('cssOutput').value;
+      if (cssContent === "/* CSS will appear here */") {
+        alert('Please add a module first!');
+        return;
+      }
+
+      const zip = new JSZip();
+      
+      const cssFolder = zip.folder('css');
+      cssFolder.file('style.css', cssContent);
+      
+      zip.generateAsync({type: 'blob'})
+        .then(function(content) {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(content);
+          link.download = 'FaceCG_Instapack.zip';
+          link.click();
+          
+          setTimeout(() => URL.revokeObjectURL(link.href), 100);
+        });
+    }
+
+    function openModuleModal() {
+      document.getElementById('moduleModal').style.display = 'block';
+      populateModuleGrid();
+    }
+
+    function closeModuleModal() {
+      document.getElementById('moduleModal').style.display = 'none';
+    }
+
+    function populateModuleGrid() {
+      const moduleGrid = document.getElementById('moduleGrid');
+      moduleGrid.innerHTML = '';
+
+      const moduleDescriptions = {
+        crosshair: 'Customize the crosshair appearance',
+        adblock: 'Hide ads and banners in the game',
+        chat: 'Modify chat box styling and appearance',
+        hotbar: 'Change hotbar item display',
+        health: 'Style the health bar',
+        menu: 'Customize main menu appearance',
+        mobile: 'Modify mobile control buttons',
+        newbutton: 'Style new button elements',
+        mainmenutheme: 'Apply a complete main menu theme',
+        settingstheme: 'Style the settings menu',
+        buttontheme: 'Apply button themes',
+        socialbartheme: 'Style the social bar',
+        inputtheme: 'Style input fields',
+        inventorytheme: 'Customize inventory appearance',
+        shoptheme: 'Style the shop interface',
+        chartheme: 'Theme character customization UI',
+        loadertheme: 'Style the loading screen',
+        ingameheadertheme: 'Modify in-game header',
+        uirequeststheme: 'Style UI request elements',
+        hotbartheme: 'Apply hotbar themes',
+        crosshairtheme: 'Apply crosshair themes',
+        chatmessagestheme: 'Style chat messages',
+        fpstheme: 'Modify FPS display',
+        coordinatetheme: 'Style coordinate display',
+        homepagebgtheme: 'Change homepage background',
+        texturepacktheme: 'Style texture pack UI',
+        everythingmenu: 'Modify everything menu',
+        settingsmenuright: 'Style settings menu right side',
+        menucontainer: 'Customize menu container',
+        likebutton: 'Style like button',
+        uirequest: 'Modify UI request elements',
+        aurabar: 'Style aura bar',
+        enchanting: 'Customize enchanting table UI',
+        schematic: 'Style schematic interface',
+        customgame: 'Modify custom game UI',
+        leaderboard: 'Style leaderboard display'
+      };
+
+      for (const [key, config] of Object.entries(FEATURE_CONFIG)) {
+        const moduleCard = document.createElement('div');
+        moduleCard.className = 'module-card-grid';
+        moduleCard.onclick = () => selectModule(key, config);
+
+        const iconMap = {
+          crosshair: 'fas fa-crosshairs',
+          adblock: 'fas fa-ban',
+          chat: 'fas fa-comments',
+          hotbar: 'fas fa-th',
+          health: 'fas fa-heart',
+          menu: 'fas fa-home',
+          mobile: 'fas fa-mobile-alt',
+          newbutton: 'fas fa-dot-circle',
+          mainmenutheme: 'fas fa-home',
+          settingstheme: 'fas fa-cog',
+          buttontheme: 'fas fa-dot-circle',
+          socialbartheme: 'fas fa-users',
+          inputtheme: 'fas fa-keyboard',
+          inventorytheme: 'fas fa-backpack',
+          shoptheme: 'fas fa-shopping-cart',
+          chartheme: 'fas fa-user',
+          loadertheme: 'fas fa-spinner',
+          ingameheadertheme: 'fas fa-heading',
+          uirequeststheme: 'fas fa-envelope',
+          hotbartheme: 'fas fa-th',
+          crosshairtheme: 'fas fa-crosshairs',
+          chatmessagestheme: 'fas fa-comment',
+          fpstheme: 'fas fa-tachometer-alt',
+          coordinatetheme: 'fas fa-map-marker-alt',
+          homepagebgtheme: 'fas fa-image',
+          texturepacktheme: 'fas fa-paint-brush',
+          everythingmenu: 'fas fa-list',
+          settingsmenuright: 'fas fa-cog',
+          menucontainer: 'fas fa-home',
+          likebutton: 'fas fa-thumbs-up',
+          uirequest: 'fas fa-envelope',
+          aurabar: 'fas fa-wind',
+          enchanting: 'fas fa-magic',
+          schematic: 'fas fa-project-diagram',
+          customgame: 'fas fa-gamepad',
+          leaderboard: 'fas fa-trophy'
+        };
+
+        const iconClass = iconMap[key] || 'fas fa-cog';
+        const cleanName = config.name.replace(/^[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F018}-\u{1F270}]+\s*/u, '');
+
+        moduleCard.innerHTML = `
+          <div class="module-card-content">
+            <div class="module-icon"><i class="${iconClass}"></i></div>
+            <div class="module-title-grid">${cleanName}</div>
+            <div class="module-desc">${moduleDescriptions[key] || 'Customize game UI elements'}</div>
+          </div>
+        `;
+
+        moduleGrid.appendChild(moduleCard);
+      }
+    }
+
+    function selectModule(type, config) {
+      selectedModuleType = type;
+
+      addModule();
+
+      const cleanName = config.name.replace(/^[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F018}-\u{1F270}]+\s*/u, '');
+
+      const confirmationHtml = `
+        <div style="
+          text-align: center; 
+          font-size: 0.9rem; 
+          color: #4CAF50; 
+          padding: 15px; 
+          border: 1px solid #4CAF50; 
+          border-radius: 18px; 
+          background: linear-gradient(90deg, #262525 0%, #242323 100%);
+          animation: fadeIn 0.3s ease-in;
+        ">
+          <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+          Added: ${cleanName}
+        </div>
+      `;
+
+      const displayElement = document.getElementById('selectedModuleDisplay');
+      displayElement.innerHTML = confirmationHtml;
+      displayElement.classList.add('has-content');
+
+      setTimeout(() => {
+        displayElement.innerHTML = '';
+        displayElement.classList.remove('has-content');
+      }, 2000);
+
+      closeModuleModal();
+    }
+
+    window.onclick = function (event) {
+      const moduleModal = document.getElementById('moduleModal');
+      const configModal = document.getElementById('configModal');
+
+      if (event.target === moduleModal) {
+        closeModuleModal();
+      }
+      if (event.target === configModal) {
+        closeConfigModal();
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+    });
+  </script>
+</body>
+
+</html>
