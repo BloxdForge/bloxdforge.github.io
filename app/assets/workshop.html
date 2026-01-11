@@ -1265,13 +1265,13 @@
                 padding-right: 0;
                 border-right: none;
             }
-            
+
             .modal-header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 16px;
             }
-            
+
             .modal-header h2 {
                 margin: 0;
             }
@@ -1631,7 +1631,7 @@
             top: 0;
             width: 100%;
         }
-        
+
         .tpack-popup-overlay {
             position: fixed;
             top: 0;
@@ -1642,15 +1642,15 @@
             backdrop-filter: blur(5px);
             z-index: 999;
         }
-        
+
         .tpack-popup-content {
             background: linear-gradient(145deg, var(--surface-color), #252424);
             padding: 0;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-xl);
-            width: 90%;
+            width: 95%;
             max-width: 800px;
-            max-height: 85vh;
+            max-height: 90vh;
             box-shadow: var(--shadow-xl);
             overflow: hidden;
             display: flex;
@@ -1659,16 +1659,16 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.7);
-            z-index: 1001;
+            z-index: 1000;
             opacity: 0;
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
-        
+
         .tpack-popup-content.show {
             opacity: 1;
             transform: translate(-50%, -50%) scale(1);
         }
-        
+
         .tpack-popup-content.hide {
             opacity: 0;
             transform: translate(-50%, -50%) scale(0.7);
@@ -1696,11 +1696,20 @@
             display: flex;
             gap: 20px;
             flex: 1;
-            min-height: 0;
+            min-height: 420px;
+            align-items: flex-start;
+            position: relative;
         }
 
+        .tpack-image img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+
         .tpack-image {
-            flex: 1;
+            flex: 2;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -1708,16 +1717,113 @@
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-color);
             overflow: hidden;
+            max-height: 450px;
+            max-width: 450px;
+            height: 450px;
         }
 
-        .tpack-image img {
+        .tpack-canvas {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: var(--background-darker);
+            border-radius: var(--radius-lg);
+            overflow-y: auto;
+            height: 450px;
+            position: relative;
+        }
+
+        .tpack-preview-area {
+            width: 450px;
+            height: 450px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--background-darker);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            display: none;
+        }
+        
+        .tpack-preview-area.preview-active {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1002;
+            width: 450px;
+            height: 450px;
+            pointer-events: auto;
+        }
+        
+
+        
+        .tpack-canvas:not(.preview-active) .tpack-preview-area {
+            pointer-events: none;
+        }
+        
+        .tpack-canvas {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: var(--background-darker);
+            border-radius: var(--radius-lg);
+            overflow-y: auto;
+            height: 450px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .tpack-canvas.preview-active {
+            position: relative;
+            min-height: 450px;
+            z-index: 1001;
+        }
+
+        .tpack-preview-area canvas {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            display: block;
+            background: #000;
+            aspect-ratio: 1 / 1;
+        }
+
+        #tpackCanvasPreviewContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--background-darker);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            min-width: 360px;
+            padding: 12px;
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+        }
+
+        #tpackPreviewBtn {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .tpack-main {
+                flex-direction: column;
+            }
+
+            .tpack-image,
+            .tpack-canvas {
+                min-width: auto;
+                width: 100%;
+            }
         }
 
         .tpack-info {
-            flex: 1;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -1727,27 +1833,33 @@
             font-size: 1.8rem;
             font-weight: 700;
             color: var(--text-accent);
-            margin: 0 0 8px 0;
+            position: relative;
+            z-index: 2;
         }
 
         .tpack-author {
             font-size: 1rem;
             color: var(--text-muted);
-            margin: 0 0 15px 0;
+            position: relative;
+            z-index: 2;
         }
 
         .tpack-description {
             font-size: 1rem;
             color: var(--text-secondary);
             line-height: 1.6;
-            margin: 0 0 25px 0;
+            position: relative;
+            z-index: 2;
         }
 
         .tpack-actions {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
+            margin-top: auto;
+            padding-top: 15px;
+            position: relative;
+            z-index: 2;
         }
 
         .tpack-btn {
@@ -1792,12 +1904,15 @@
             box-shadow: var(--shadow-lg);
         }
 
+        #tpackPreviewBtn {
+            grid-column: span 2;
+        }
+
         .tpack-preview-btn:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow-lg);
         }
-        
-        /* Image Preview Modal Styles */
+
         .image-preview-modal {
             display: none;
             position: fixed;
@@ -1809,7 +1924,7 @@
             background-color: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(5px);
         }
-        
+
         .image-preview-overlay {
             position: absolute;
             top: 0;
@@ -1817,7 +1932,7 @@
             width: 100%;
             height: 100%;
         }
-        
+
         .image-preview-content {
             background: linear-gradient(145deg, var(--surface-color), #252424);
             margin: 2% auto;
@@ -1833,7 +1948,7 @@
             flex-direction: column;
             position: relative;
         }
-        
+
         .image-preview-header {
             display: flex;
             justify-content: space-between;
@@ -1841,14 +1956,14 @@
             padding: 24px;
             border-bottom: 1px solid var(--border-color);
         }
-        
+
         .image-preview-header h2 {
             margin: 0;
             color: var(--text-accent);
             font-size: 1.8rem;
             font-weight: 700;
         }
-        
+
         .image-preview-close {
             color: var(--text-muted);
             font-size: 2rem;
@@ -1864,26 +1979,26 @@
             justify-content: center;
             border-radius: 50%;
         }
-        
+
         .image-preview-close:hover {
             color: var(--primary-color);
             background: rgba(255, 107, 57, 0.1);
         }
-        
+
         .image-preview-body {
             padding: 24px;
             max-height: calc(90vh - 120px);
             overflow-y: auto;
             background: var(--background-darker);
         }
-        
+
         .image-preview-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 20px;
             padding: 10px;
         }
-        
+
         .image-preview-item {
             display: flex;
             flex-direction: column;
@@ -1894,13 +2009,13 @@
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
         }
-        
+
         .image-preview-item:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow-md);
             border-color: var(--primary-color);
         }
-        
+
         .image-preview-img {
             width: 80px;
             height: 80px;
@@ -1911,7 +2026,7 @@
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
         }
-        
+
         .image-preview-name {
             font-size: 0.8rem;
             color: var(--text-secondary);
@@ -1919,14 +2034,14 @@
             word-break: break-all;
             max-width: 100%;
         }
-        
+
         .loading-preview {
             grid-column: 1 / -1;
             text-align: center;
             padding: 40px;
             color: var(--text-secondary);
         }
-        
+
         @media (max-width: 768px) {
             body {
                 padding: 15px;
@@ -2255,10 +2370,11 @@
             </a>
         </div>
     </div>
-    
+
     <div id="tpackPopup" class="tpack-popup">
         <div class="tpack-popup-overlay"></div>
-        <span class="tpack-popup-close" style="position: fixed; top: 20px; left: 20px; z-index: 1002; font-size: 32px; color: white; cursor: pointer; background: rgba(0,0,0,0.5); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">&times;</span>
+        <span class="tpack-popup-close"
+            style="position: fixed; top: 20px; left: 20px; z-index: 1003; font-size: 32px; color: white; cursor: pointer; background: rgba(0,0,0,0.5); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">&times;</span>
         <div class="tpack-popup-content">
             <div class="tpack-popup-body">
                 <div id="tpackDetails" class="tpack-details">
@@ -2266,29 +2382,33 @@
                         <div class="tpack-image">
                             <img id="tpackImage" src="" alt="Preview Image">
                         </div>
-                        <div class="tpack-info">
+                        <div class="tpack-canvas">
+                            <div class="tpack-preview-area">
+                                <canvas id="tpackCanvas" aria-label="Texture pack preview"></canvas>
+                            </div>
                             <h2 id="tpackTitle" class="tpack-title"></h2>
                             <p id="tpackAuthor" class="tpack-author"></p>
                             <p id="tpackDescription" class="tpack-description"></p>
                             <div class="tpack-actions">
-                                <a id="tpackDownloadBtn" class="tpack-btn tpack-download-btn" target="_blank" rel="noopener noreferrer">
+                                <a id="tpackDownloadBtn" class="tpack-btn tpack-download-btn" target="_blank"
+                                    rel="noopener noreferrer">
                                     <i class="fas fa-download"></i> Download
                                 </a>
                                 <button id="tpackShareBtn" class="tpack-btn black-btn">
                                     <i class="fas fa-share"></i> Share
                                 </button>
                                 <button id="tpackPreviewBtn" class="tpack-btn black-btn">
-                                    <i class="fas fa-eye"></i> Preview
+                                    <i class="fas fa-eye"></i> Preview 3D
                                 </button>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Modal for displaying PNG images from texture pack -->
+
     <div id="imagePreviewModal" class="image-preview-modal">
         <div class="image-preview-overlay"></div>
         <div class="image-preview-content">
@@ -2298,7 +2418,6 @@
             </div>
             <div class="image-preview-body">
                 <div id="imagePreviewContainer" class="image-preview-container">
-                    <!-- Images will be loaded here dynamically -->
                     <div class="loading-preview">
                         <div class="loading-spinner"></div>
                         <p>Loading texture pack images...</p>
@@ -2307,7 +2426,7 @@
             </div>
         </div>
     </div>
-    
+
     <script>
         try {
             const SUPABASE_URL = 'https://eytqkzsqauvgbeblgtuz.supabase.co';
@@ -2316,12 +2435,12 @@
         } catch (error) {
             console.error('Supabase initialization error:', error);
             window.supabase = {
-                from: function() {
+                from: function () {
                     return {
-                        select: function() {
+                        select: function () {
                             return { data: [], error: null };
                         },
-                        insert: function() {
+                        insert: function () {
                             return { data: [], error: { message: 'Supabase not initialized' } };
                         }
                     };
@@ -2630,6 +2749,7 @@
         let exploreBtn, createHeroBtn, navButtons, carouselItems;
         let packsCount, creationsCount;
         let allSubmissions = [];
+        let tpackPopup, tpackImage, tpackTitle, tpackAuthor, tpackDescription, tpackDownloadBtn, tpackShareBtn, tpackPreviewBtn, tpackCanvas;
         let selectedIcon = null;
         let lastUploadTime = 0;
         let followedCreators = new Set();
@@ -2729,10 +2849,9 @@
                     createBtn.style.display = 'none';
                 }
                 await loadSubmissions();
-                updateTabView(); 
+                updateTabView();
                 console.log('App initialized successfully');
-                
-                // Check for shared pack after all data is loaded
+
                 checkForSharedPack();
             } catch (error) {
                 console.error('Error during DOMContentLoaded:', error);
@@ -2786,7 +2905,16 @@
                 carouselItems = document.querySelectorAll('.carousel-item');
                 packsCount = document.getElementById('packsCount');
                 creationsCount = document.getElementById('creationsCount');
-                
+                tpackPopup = document.getElementById('tpackPopup');
+                tpackImage = document.getElementById('tpackImage');
+                tpackTitle = document.getElementById('tpackTitle');
+                tpackAuthor = document.getElementById('tpackAuthor');
+                tpackDescription = document.getElementById('tpackDescription');
+                tpackDownloadBtn = document.getElementById('tpackDownloadBtn');
+                tpackShareBtn = document.getElementById('tpackShareBtn');
+                tpackPreviewBtn = document.getElementById('tpackPreviewBtn');
+                tpackCanvas = document.getElementById('tpackCanvas');
+
                 const missingElements = [];
                 if (!searchInput) missingElements.push('searchInput');
                 if (!signInBtn) missingElements.push('signInBtn');
@@ -2831,11 +2959,19 @@
                 if (!createHeroBtn) missingElements.push('createHeroBtn');
                 if (!packsCount) missingElements.push('packsCount');
                 if (!creationsCount) missingElements.push('creationsCount');
-                
+                if (!tpackPopup) missingElements.push('tpackPopup');
+                if (!tpackImage) missingElements.push('tpackImage');
+                if (!tpackTitle) missingElements.push('tpackTitle');
+                if (!tpackAuthor) missingElements.push('tpackAuthor');
+                if (!tpackDescription) missingElements.push('tpackDescription');
+                if (!tpackDownloadBtn) missingElements.push('tpackDownloadBtn');
+                if (!tpackShareBtn) missingElements.push('tpackShareBtn');
+                if (!tpackPreviewBtn) missingElements.push('tpackPreviewBtn');
+
                 if (missingElements.length > 0) {
                     console.warn('Missing elements in workshop:', missingElements);
                 }
-                
+
                 console.log('DOM elements initialized. Found:', {
                     tabButtons: tabButtons.length,
                     navButtons: navButtons.length,
@@ -2969,7 +3105,7 @@
                     });
                     console.log('Navigation buttons listeners attached');
                 }
-                
+
                 console.log('All event listeners have been set up');
             } catch (error) {
                 console.error('Error setting up event listeners:', error);
@@ -3147,19 +3283,19 @@
                     usernameInput.readOnly = true;
                 }
                 localStorage.setItem('puterUser', JSON.stringify(user));
-                
+
                 if (createBtn) createBtn.style.display = 'flex';
                 if (signInBtn) signInBtn.style.display = 'none';
                 if (userProfile) {
                     userProfile.style.display = 'flex';
                     if (usernameDisplay) usernameDisplay.textContent = user.username;
                 }
-                
+
                 showNotification('Successfully signed in!', 'success');
             } catch (error) {
                 console.error('Sign in error:', error);
                 alert('Sign in failed. Please try again. Error: ' + error.message);
-                
+
                 showNotification('Sign in failed: ' + error.message, 'error');
             }
         }
@@ -3171,7 +3307,7 @@
                     if (signInBtn) signInBtn.style.display = 'flex';
                     if (createBtn) createBtn.style.display = 'none';
                     if (userProfile) userProfile.style.display = 'none';
-                    
+
                     showNotification('Successfully signed out.', 'success');
                     return;
                 }
@@ -3184,19 +3320,19 @@
                     usernameInput.readOnly = false;
                 }
                 localStorage.removeItem('puterUser');
-                
+
                 if (createBtn) createBtn.style.display = 'none';
                 if (signInBtn) signInBtn.style.display = 'flex';
                 if (userProfile) {
                     userProfile.style.display = 'none';
                     if (usernameDisplay) usernameDisplay.textContent = '';
                 }
-                
+
                 showNotification('Successfully signed out.', 'success');
             } catch (error) {
                 console.error('Sign out error:', error);
                 alert('Sign out failed. Please try again. Error: ' + error.message);
-                
+
                 showNotification('Sign out failed: ' + error.message, 'error');
             }
         }
@@ -3228,7 +3364,7 @@
                 if (storedFollows) {
                     followedCreators = new Set(JSON.parse(storedFollows));
                 }
-                
+
                 console.log('Authentication status checked:', {
                     hasStoredUser: !!storedUser,
                     puterAvailable: !!puterAvailable,
@@ -3353,7 +3489,7 @@
                 if (!supabase) {
                     throw new Error('Supabase client is not initialized');
                 }
-                
+
                 const { data, error } = await supabase
                     .from('submissions')
                     .insert([submission])
@@ -3363,10 +3499,10 @@
                     throw error;
                 }
                 lastUploadTime = Date.now();
-                
+
 
                 showNotification('Creation published successfully!', 'success');
-                
+
                 if (modal) modal.style.display = 'none';
                 uploadForm.reset();
                 selectedIcon = null;
@@ -3397,10 +3533,10 @@
                 } else if (errorMessage.includes('auth')) {
                     errorMessage = 'Authentication error: Unable to access database. Please try refreshing the page.';
                 }
-                
+
 
                 showNotification('Error uploading submission: ' + errorMessage, 'error');
-                
+
                 alert(`Error uploading submission: ${errorMessage}`);
             } finally {
                 submitButton.textContent = originalButtonText;
@@ -3419,19 +3555,19 @@
                     console.error('Supabase client is not initialized');
                     throw new Error('Supabase client is not initialized');
                 }
-                
+
                 const { data, error } = await supabase
                     .from('submissions')
                     .select('*')
                     .order('created_at', { ascending: false });
-                
+
                 console.log('Supabase response:', { data, error });
-                
+
                 if (error) {
                     console.error('Supabase error details:', error);
                     throw error;
                 }
-                
+
                 allSubmissions = data || [];
                 console.log('Found', allSubmissions.length, 'submissions');
                 updateCounts();
@@ -3439,7 +3575,7 @@
             } catch (error) {
                 console.error('Error loading submissions:', error);
                 allSubmissions = [];
-                
+
                 let errorMessage = error.message || 'Please try again later.';
                 if (errorMessage.includes('row-level security policy') || errorMessage.includes('permission')) {
                     errorMessage = 'Database access error: You need to enable proper permissions in Supabase. ' +
@@ -3450,9 +3586,9 @@
                 } else if (errorMessage.includes('auth')) {
                     errorMessage = 'Authentication error: Unable to access database. Please try refreshing the page.';
                 }
-                
+
                 showNotification('Error loading creations: ' + errorMessage, 'error');
-                
+
                 renderTexturePacks();
                 renderCreations();
             }
@@ -3753,7 +3889,7 @@
                         showSubmissionDetails(creation.id);
                     }
                 });
-                
+
                 setTimeout(() => {
                     const followBtn = card.querySelector('.follow-btn');
                     if (followBtn) {
@@ -3896,7 +4032,7 @@
         function displayIcon(iconClass) {
             return `<i class="${iconClass}" style="font-size: 150px; color: #f78c5a;"></i>`;
         }
-        
+
         function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
             notification.className = 'notification';
@@ -3915,13 +4051,13 @@
                 background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'};
             `;
             notification.textContent = message;
-            
+
             document.body.appendChild(notification);
-            
+
             setTimeout(() => {
                 notification.style.transform = 'translateX(0)';
             }, 100);
-            
+
             setTimeout(() => {
                 notification.style.transform = 'translateX(120%)';
                 setTimeout(() => {
@@ -3931,11 +4067,11 @@
                 }, 300);
             }, 3000);
         }
-        
+
         function showSharePopup(pack) {
-            showTpackPopup(pack); // Use the new tpack popup instead of the old one
+            showTpackPopup(pack);
         }
-        
+
         function showTpackPopup(pack) {
             if (tpackImage) tpackImage.src = pack.imageUrl;
             if (tpackImage) tpackImage.alt = `${pack.title} preview`;
@@ -3943,7 +4079,7 @@
             if (tpackAuthor) tpackAuthor.textContent = `by ${pack.author}`;
             if (tpackDescription) tpackDescription.textContent = pack.description;
             if (tpackDownloadBtn) tpackDownloadBtn.href = pack.downloadUrl;
-            
+
             if (tpackShareBtn) {
                 tpackShareBtn.onclick = () => {
                     const baseUrl = window.location.origin + window.location.pathname;
@@ -3960,108 +4096,81 @@
                     });
                 };
             }
-            
+
+
             if (tpackPreviewBtn) {
+                let isPreviewMode = false;
+
                 tpackPreviewBtn.onclick = async () => {
                     try {
                         const originalText = tpackPreviewBtn.innerHTML;
                         tpackPreviewBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
                         tpackPreviewBtn.disabled = true;
-                        
-                        const response = await fetch(pack.downloadUrl);
-                        if (!response.ok) {
-                            throw new Error(`Failed to download ZIP file: ${response.status} ${response.statusText}`);
-                        }
-                        
-                        const zipBlob = await response.blob();
-                        const zipData = await zipBlob.arrayBuffer();
-                        
-                        const zip = new JSZip();
-                        const zipContent = await zip.loadAsync(zipData);
-                        
-                        const targetFiles = ['grass_top.png', 'diamond_block.png', 'diamond_sword.png', 'log_aspen.png', 'stone_axe.png', 'planks_maple.png'];
-                        const pngFiles = Object.keys(zipContent.files).filter(fileName => {
-                            const fileNameLower = fileName.toLowerCase();
-                            return fileNameLower.endsWith('.png') && 
-                                   targetFiles.some(target => fileNameLower.includes(target));
-                        });
-                        
-                        const modal = document.getElementById('imagePreviewModal');
-                        const container = document.getElementById('imagePreviewContainer');
-                        
-                        container.innerHTML = `
-                            <div class="loading-preview">
-                                <div class="loading-spinner"></div>
-                                <p>Loading ${pngFiles.length} PNG images...</p>
-                            </div>
-                        `;
-                        
-                        modal.style.display = 'block';
-                        
-                        if (pngFiles.length > 0) {
-                            container.innerHTML = '';
-                            
-                            const fragment = document.createDocumentFragment();
-                            
-                            for (const fileName of pngFiles) {
-                                try {
-                                    const file = zipContent.files[fileName];
-                                    const imageData = await file.async('blob');
-                                    const imageUrl = URL.createObjectURL(imageData);
-                                    
-                                    const imageItem = document.createElement('div');
-                                    imageItem.className = 'image-preview-item';
-                                    
-                                    const img = document.createElement('img');
-                                    img.src = imageUrl;
-                                    img.alt = fileName;
-                                    img.className = 'image-preview-img';
-                                    
-                                    img.style.imageRendering = 'pixelated';
-                                    img.style.imageRendering = '-moz-crisp-edges';
-                                    img.style.imageRendering = 'crisp-edges';
-                                    
-                                    const nameDiv = document.createElement('div');
-                                    nameDiv.className = 'image-preview-name';
-                                    nameDiv.textContent = fileName;
-                                    
-                                    imageItem.appendChild(img);
-                                    imageItem.appendChild(nameDiv);
-                                    fragment.appendChild(imageItem);
-                                    
-                                    img.onload = () => URL.revokeObjectURL(imageUrl);
-                                } catch (err) {
-                                    console.error(`Error processing image ${fileName}:`, err);
-                                }
+
+                        if (!isPreviewMode) {
+                            // Switch to 3D preview mode
+                            const tpackImageContainer = document.querySelector('.tpack-image');
+                            const tpackCanvasContainer = document.querySelector('.tpack-canvas');
+
+                            // Keep the image visible and show the canvas over it
+                            tpackImageContainer.style.display = 'flex';
+
+                            // Move the canvas preview area to the image container
+                            const canvasPreviewArea = tpackCanvasContainer.querySelector('.tpack-preview-area');
+                            tpackImageContainer.appendChild(canvasPreviewArea);
+                            canvasPreviewArea.style.display = 'block';
+                            canvasPreviewArea.classList.add('preview-active');
+                            tpackCanvasContainer.classList.add('preview-active');
+
+                            // Initialize the 3D preview
+                            try {
+                                await ensureThreeLoaded();
+                                await initThreePreview(tpackCanvas);
+                                await loadPreviewTexturesFromZip(pack.downloadUrl);
+                                buildPreviewScene();
+                            } catch (err) {
+                                console.error('Three.js preview error:', err);
+                                // Fallback to image if 3D preview fails
+                                tpackImageContainer.style.display = 'flex';
+                                canvasPreviewArea.style.display = 'none';
                             }
-                            
-                            container.appendChild(fragment);
+
+                            isPreviewMode = true;
+                            tpackPreviewBtn.innerHTML = '<i class="fas fa-image"></i> Show Banner';
                         } else {
-                            container.innerHTML = `
-                                <div class="loading-preview">
-                                    <i class="fas fa-images" style="font-size: 4rem; margin-bottom: 24px; color: var(--primary-color);"></i>
-                                    <h3>No PNG images found</h3>
-                                    <p>The ZIP file does not contain any PNG images.</p>
-                                </div>
-                            `;
+                            // Switch back to image mode
+                            const tpackImageContainer = document.querySelector('.tpack-image');
+                            const tpackCanvasContainer = document.querySelector('.tpack-canvas');
+
+                            // Show the image and move the canvas back to its original container
+                            tpackImageContainer.style.display = 'flex';
+                            const canvasPreviewArea = tpackImageContainer.querySelector('.tpack-preview-area');
+                            if (canvasPreviewArea) {
+                                tpackCanvasContainer.appendChild(canvasPreviewArea);
+                            }
+                            canvasPreviewArea.style.display = 'none';
+                            canvasPreviewArea.classList.remove('preview-active');
+                            tpackCanvasContainer.classList.remove('preview-active');
+
+                            isPreviewMode = false;
+                            tpackPreviewBtn.innerHTML = '<i class="fas fa-eye"></i> Preview 3D';
                         }
-                        
-                        tpackPreviewBtn.innerHTML = originalText;
+
                         tpackPreviewBtn.disabled = false;
                     } catch (error) {
                         console.error('Error in preview functionality:', error);
                         alert('Error loading texture pack preview: ' + error.message);
-                        
+
                         const originalText = tpackPreviewBtn.innerHTML;
                         tpackPreviewBtn.innerHTML = originalText;
                         tpackPreviewBtn.disabled = false;
                     }
                 };
             }
-            
+
             if (tpackPopup) {
                 tpackPopup.style.display = 'flex';
-                void tpackPopup.offsetWidth; 
+                void tpackPopup.offsetWidth;
                 const content = document.querySelector('.tpack-popup-content');
                 if (content) {
                     content.classList.remove('hide');
@@ -4069,7 +4178,7 @@
                 }
             }
         }
-        
+
         document.addEventListener('DOMContentLoaded', () => {
             const tpackPopupClose = document.querySelector('.tpack-popup-close');
             if (tpackPopupClose) {
@@ -4078,32 +4187,32 @@
                     if (content) {
                         content.classList.remove('show');
                         content.classList.add('hide');
-                        
+
                         setTimeout(() => {
                             if (tpackPopup) tpackPopup.style.display = 'none';
-                        }, 300); 
+                        }, 300);
                     }
                 });
             }
-            
+
             window.addEventListener('click', (event) => {
                 if (tpackPopup && (event.target === tpackPopup || event.target.classList.contains('tpack-popup-overlay'))) {
                     const content = document.querySelector('.tpack-popup-content');
                     if (content) {
                         content.classList.remove('show');
                         content.classList.add('hide');
-                        
-                       
+
+
                         setTimeout(() => {
                             if (tpackPopup) tpackPopup.style.display = 'none';
-                        }, 300); 
+                        }, 300);
                     }
                 }
             });
-            
+
             const imagePreviewModal = document.getElementById('imagePreviewModal');
             const imagePreviewClose = document.querySelector('.image-preview-close');
-            
+
             if (imagePreviewClose) {
                 imagePreviewClose.addEventListener('click', () => {
                     if (imagePreviewModal) {
@@ -4111,7 +4220,7 @@
                     }
                 });
             }
-            
+
             window.addEventListener('click', (event) => {
                 if (imagePreviewModal && event.target === imagePreviewModal) {
                     imagePreviewModal.style.display = 'none';
@@ -4127,6 +4236,235 @@
                     showSharePopup(pack);
                 }
             }
+        }
+
+        function loadScriptOnce(src) {
+            return new Promise((resolve, reject) => {
+                if (window.THREE) return resolve();
+                const existing = document.querySelector(`script[src="${src}"]`);
+                if (existing) {
+                    existing.addEventListener('load', () => resolve());
+                    existing.addEventListener('error', e => reject(e));
+                    return;
+                }
+                const s = document.createElement('script');
+                s.src = src;
+                s.onload = () => resolve();
+                s.onerror = (e) => reject(e);
+                document.head.appendChild(s);
+            });
+        }
+
+        async function ensureThreeLoaded() {
+            if (window.THREE) return;
+            await loadScriptOnce('https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js');
+        }
+
+        const threePreview = {
+            canvas: null,
+            renderer: null,
+            scene: null,
+            camera: null,
+            loader: null,
+            zipFiles: {},
+            angle: 0,
+            radius: 10,
+            reqId: null
+        };
+
+        async function initThreePreview(canvas) {
+            if (!window.THREE) throw new Error('THREE not loaded');
+            if (threePreview.renderer && threePreview.canvas === canvas) return;
+
+            if (threePreview.reqId) cancelAnimationFrame(threePreview.reqId);
+
+            threePreview.canvas = canvas;
+            threePreview.scene = new THREE.Scene();
+            threePreview.scene.background = new THREE.Color(0x111111);
+            const w = canvas.clientWidth || 600;
+            const h = canvas.clientHeight || 320;
+            threePreview.camera = new THREE.PerspectiveCamera(60, w / h, 0.1, 100);
+            threePreview.camera.position.set(10, 8, 10);
+            threePreview.renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            threePreview.renderer.setSize(w, h, false);
+            try { threePreview.renderer.outputColorSpace = THREE.SRGBColorSpace; } catch (e) { }
+            threePreview.renderer.shadowMap.enabled = true;
+            threePreview.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            threePreview.loader = new THREE.TextureLoader();
+
+            threePreview.scene.add(new THREE.AmbientLight(0xffcfa0, 0.5));
+            threePreview.scene.add(new THREE.HemisphereLight(0xffe6b3, 0x442200, 0.9));
+
+            const sun = new THREE.DirectionalLight(0xffc880, 1.0);
+            sun.position.set(15, 25, -15);
+            sun.castShadow = true;
+            sun.shadow.mapSize.set(2048, 2048);
+            sun.shadow.camera.near = 1;
+            sun.shadow.camera.far = 50;
+            threePreview.scene.add(sun);
+
+            const fill = new THREE.DirectionalLight(0xffd8aa, 0.7);
+            fill.position.set(-10, 10, 10);
+            threePreview.scene.add(fill);
+
+            threePreview.angle = 0;
+            threePreview.radius = 10;
+
+            function animatePreview() {
+                threePreview.reqId = requestAnimationFrame(animatePreview);
+                threePreview.angle += 0.0035;
+                const cam = threePreview.camera;
+                cam.position.set(Math.cos(threePreview.angle) * threePreview.radius, 7, Math.sin(threePreview.angle) * threePreview.radius);
+                cam.lookAt(1.5, 2.5, 0);
+                threePreview.renderer.render(threePreview.scene, cam);
+            }
+
+            animatePreview();
+
+            canvas.onwheel = (e) => {
+                e.preventDefault();
+                threePreview.radius += e.deltaY * 0.01;
+                threePreview.radius = Math.min(Math.max(threePreview.radius, 5), 30);
+            };
+
+            window.addEventListener('resize', () => {
+                if (!threePreview.renderer) return;
+                const w2 = canvas.clientWidth || 600;
+                const h2 = canvas.clientHeight || 320;
+                threePreview.camera.aspect = w2 / h2;
+                threePreview.camera.updateProjectionMatrix();
+                threePreview.renderer.setSize(w2, h2, false);
+            });
+        }
+
+        async function loadPreviewTexturesFromZip(url) {
+            threePreview.zipFiles = {};
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('ZIP fetch failed: ' + res.status);
+                const buffer = await res.arrayBuffer();
+                const zip = await new JSZip().loadAsync(buffer);
+                for (const f of Object.keys(zip.files)) {
+                    const lower = f.toLowerCase();
+                    if (lower.endsWith('.png') || lower.endsWith('.jpg') || lower.endsWith('.jpeg')) {
+                        const blob = await zip.files[f].async('blob');
+                        threePreview.zipFiles[f.split('/').pop()] = URL.createObjectURL(blob);
+                    }
+                }
+            } catch (err) {
+                console.warn('Preview ZIP load failed, falling back to assets:', err);
+            }
+        }
+
+        function loadPreviewTexture(name) {
+            const file = threePreview.zipFiles[name] || threePreview.zipFiles[name.toLowerCase()];
+            const url = file || (`data/packs/${name}`);
+            const t = threePreview.loader.load(url);
+            t.magFilter = THREE.NearestFilter;
+            t.minFilter = THREE.NearestFilter;
+            t.generateMipmaps = false;
+            return t;
+        }
+
+        function stylizeMat(mat) {
+            mat.roughness = 0.9;
+            mat.metalness = 0;
+            return mat;
+        }
+
+        function clearPreviewScene() {
+            if (!threePreview.scene) return;
+            while (threePreview.scene.children.length) {
+                const obj = threePreview.scene.children[0];
+                threePreview.scene.remove(obj);
+                if (obj.geometry) obj.geometry.dispose && obj.geometry.dispose();
+                if (obj.material) {
+                    if (Array.isArray(obj.material)) obj.material.forEach(m => m.dispose && m.dispose());
+                    else obj.material.dispose && obj.material.dispose();
+                }
+            }
+        }
+
+        function buildPreviewScene() {
+            if (!threePreview.scene) return;
+            clearPreviewScene();
+            threePreview.scene.add(new THREE.AmbientLight(0xffcfa0, 0.5));
+            threePreview.scene.add(new THREE.HemisphereLight(0xffe6b3, 0x442200, 0.9));
+            const sun = new THREE.DirectionalLight(0xffc880, 1.0);
+            sun.position.set(15, 25, -15);
+            threePreview.scene.add(sun);
+
+            const blockGeo = new THREE.BoxGeometry(0.998, 1, 0.998);
+            const grass = stylizeMat(new THREE.MeshStandardMaterial({ map: loadPreviewTexture('grass_top.png') }));
+            const dirt = stylizeMat(new THREE.MeshStandardMaterial({ map: loadPreviewTexture('dirt.png') }));
+            const stone = stylizeMat(new THREE.MeshStandardMaterial({ map: loadPreviewTexture('stone.png') }));
+            const log = stylizeMat(new THREE.MeshStandardMaterial({ map: loadPreviewTexture('log_maple.png') }));
+            const leaf = stylizeMat(new THREE.MeshStandardMaterial({ map: loadPreviewTexture('leaves_maple.png') }));
+
+            function createPlatform(w, d, h, ox, oz) {
+                for (let y = 0; y < h; y++) {
+                    const mat = (y === h - 1) ? grass : (y === h - 2) ? dirt : stone;
+                    for (let x = 0; x < w; x++) for (let z = 0; z < d; z++) {
+                        const b = new THREE.Mesh(blockGeo, mat);
+                        b.position.set(x - (w - 1) / 2 + ox, y + 0.5, z - (d - 1) / 2 + oz);
+                        b.castShadow = b.receiveShadow = true;
+                        threePreview.scene.add(b);
+                    }
+                }
+            }
+
+            createPlatform(3, 3, 5, 0, -3);
+            createPlatform(3, 3, 5, 0, 0);
+            createPlatform(3, 3, 5, 3, 0);
+
+            const chestMaterials = [
+                stylizeMat(new THREE.MeshStandardMaterial({ map: loadPreviewTexture('chest_side.png') })),
+                stylizeMat(new THREE.MeshStandardMaterial({ map: loadPreviewTexture('chest_side.png') })),
+                stylizeMat(new THREE.MeshStandardMaterial({ map: loadPreviewTexture('chest_top.png') })),
+                stylizeMat(new THREE.MeshStandardMaterial({ map: loadPreviewTexture('chest_side.png') })),
+                stylizeMat(new THREE.MeshStandardMaterial({ map: loadPreviewTexture('chest_front.png') })),
+                stylizeMat(new THREE.MeshStandardMaterial({ map: loadPreviewTexture('chest_side.png') })),
+            ];
+
+            const chest = new THREE.Mesh(new THREE.BoxGeometry(0.998, 1, 0.998), chestMaterials);
+            chest.position.set(0, 5 + 0.5, -4);
+            chest.castShadow = chest.receiveShadow = true;
+            threePreview.scene.add(chest);
+
+            function createTrunk(x, y, z, h) {
+                for (let i = 0; i < h; i++) {
+                    const b = new THREE.Mesh(blockGeo, log);
+                    b.position.set(x, y + i + 0.5, z);
+                    b.castShadow = b.receiveShadow = true;
+                    threePreview.scene.add(b);
+                }
+            }
+
+            function leafUnit(x, y, z) {
+                const b = new THREE.Mesh(blockGeo, leaf);
+                b.position.set(x, y + 0.5, z);
+                b.castShadow = b.receiveShadow = true;
+                threePreview.scene.add(b);
+            }
+
+            function leafLayerNoCorners(cx, y, cz, size) {
+                const r = Math.floor(size / 2);
+                for (let dx = -r; dx <= r; dx++) for (let dz = -r; dz <= r; dz++) {
+                    if (Math.abs(dx) === r && Math.abs(dz) === r) continue;
+                    leafUnit(cx + dx, y, cz + dz);
+                }
+            }
+
+            const trunkX = 0, trunkY = 5, trunkZ = 0, trunkHeight = 2, trunkTopY = trunkY + trunkHeight;
+            createTrunk(trunkX, trunkY, trunkZ, trunkHeight);
+            leafLayerNoCorners(trunkX, trunkTopY, trunkZ, 5);
+            leafLayerNoCorners(trunkX, trunkTopY + 1, trunkZ, 5);
+            for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) leafUnit(trunkX + dx, trunkTopY + 2, trunkZ + dz);
+            leafUnit(trunkX, trunkTopY + 3, trunkZ);
+            leafUnit(trunkX + 1, trunkTopY + 3, trunkZ);
+            leafUnit(trunkX - 1, trunkTopY + 3, trunkZ);
+            leafUnit(trunkX, trunkTopY + 3, trunkZ + 1);
+            leafUnit(trunkX, trunkTopY + 3, trunkZ - 1);
         }
         document.addEventListener('DOMContentLoaded', function () {
             const statItems = document.querySelectorAll('.stat-item');
