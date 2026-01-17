@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bloxd API Explorer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1b1a1a 0%, #171616 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .card {
+      background: linear-gradient(145deg, #262525, #212020);
+      border: 1px solid #3a3939;
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(45deg, #ff6b39, #ff8c5a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      color: #a0a0a0;
+      font-size: 1.2rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .tab {
+      background: linear-gradient(145deg, #262525, #212020);
+      border: 1px solid #3a3939;
+      color: #e8e8e8;
+      padding: 12px 25px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab:hover {
+      background: linear-gradient(145deg, #2e2d2d, #282727);
+      border-color: #4a4949;
+      transform: translateY(-2px);
+    }
+
+    .tab.active {
+      background: linear-gradient(45deg, #ff6b39, #ff8c5a);
+      border-color: #ff6b39;
+      color: white;
+    }
+
+    .content-area {
+      background: linear-gradient(145deg, #262525, #212020);
+      border: 1px solid #3a3939;
+      border-radius: 20px;
+      padding: 25px;
+      min-height: 500px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .section-title {
+      color: #ff8c5a;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .api-content {
+      line-height: 1.6;
+      color: #ddd;
+    }
+
+    .api-content h1 {
+      color: #ff8c5a;
+      font-size: 2rem;
+      margin: 25px 0 15px 0;
+      border-bottom: 1px solid #3a3939;
+      padding-bottom: 10px;
+    }
+
+    .api-content h2 {
+      color: #ff6b39;
+      font-size: 1.5rem;
+      margin: 20px 0 12px 0;
+    }
+
+    .api-content h3 {
+      color: #ffb380;
+      font-size: 1.3rem;
+      margin: 15px 0 10px 0;
+    }
+
+    .api-content p {
+      margin: 10px 0;
+      color: #bbb;
+    }
+
+    .api-content ul {
+      margin: 15px 0;
+      padding-left: 25px;
+    }
+
+    .api-content li {
+      margin: 8px 0;
+      color: #bbb;
+    }
+
+    .api-content code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #ff8c5a;
+    }
+
+    .api-content pre {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid #3a3939;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 15px 0;
+      overflow-x: auto;
+    }
+
+    .api-content pre code {
+      background: none;
+      padding: 0;
+      color: #e8e8e8;
+      line-height: 1.5;
+    }
+
+    .search-box {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto 25px auto;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid #3a3939;
+      color: white;
+      padding: 12px 20px 12px 45px;
+      border-radius: 25px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: #ff6b39;
+      box-shadow: 0 0 0 2px rgba(255, 107, 57, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a0a0a0;
+    }
+
+    .method-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #3a3939;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 15px 0;
+      transition: all 0.3s ease;
+    }
+
+    .method-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #4a4949;
+      transform: translateY(-2px);
+    }
+
+    .method-name {
+      color: #ff8c5a;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .method-signature {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      color: #ff6b39;
+      margin: 10px 0;
+      overflow-x: auto;
+    }
+
+    .method-description {
+      color: #bbb;
+      margin: 10px 0;
+      line-height: 1.5;
+    }
+
+    .param-list {
+      margin: 15px 0;
+    }
+
+    .param-item {
+      margin: 8px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .param-item:before {
+      content: "•";
+      color: #ff6b39;
+      position: absolute;
+      left: 0;
+    }
+
+    .param-name {
+      color: #ff8c5a;
+      font-weight: 500;
+    }
+
+    .param-type {
+      color: #a0a0a0;
+      font-style: italic;
+    }
+
+    .no-results {
+      text-align: center;
+      color: #a0a0a0;
+      padding: 40px;
+      font-size: 1.1rem;
+    }
+    
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    .search-modal {
+      background: linear-gradient(145deg, #262525, #212020);
+      border: 1px solid #3a3939;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 1000px;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+    
+    .modal-overlay.active .search-modal {
+      transform: scale(1);
+    }
+    
+    .modal-header {
+      padding: 20px;
+      border-bottom: 1px solid #3a3939;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-title {
+      color: #ff8c5a;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .modal-close {
+      background: none;
+      border: 1px solid #3a3939;
+      color: #a0a0a0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    
+    .modal-close:hover {
+      background: rgba(255, 107, 57, 0.2);
+      border-color: #ff6b39;
+      color: #ff6b39;
+    }
+    
+    .modal-content {
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    
+    .search-result-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid #3a3939;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .search-result-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: #4a4949;
+      transform: translateY(-2px);
+    }
+    
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .result-file {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #ff8c5a;
+      font-weight: 500;
+    }
+    
+    .result-line {
+      color: #a0a0a0;
+      font-size: 0.9rem;
+    }
+    
+    .result-content {
+      font-family: 'Courier New', monospace;
+      font-size: 0.95rem;
+      color: #e8e8e8;
+      line-height: 1.5;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      overflow-x: auto;
+    }
+    
+    .view-button {
+      background: linear-gradient(45deg, #ff6b39, #ff8c5a);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .view-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 107, 57, 0.4);
+    }
+    
+    .modal-footer {
+      padding: 15px 20px;
+      border-top: 1px solid #3a3939;
+      text-align: center;
+      color: #a0a0a0;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .tabs {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .tab {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+      }
+      
+      .content-area {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <div class="logo">Bloxd API Explorer</div>
+        <div class="subtitle">Explore the complete Bloxd JavaScript API documentation</div>
+      </div>
+
+      <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Search across all API files...">
+        <div id="search-stats" style="margin-top: 10px; text-align: center; color: #a0a0a0; font-size: 0.9rem; display: none;"></div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" data-tab="main">
+          <i class="fas fa-book"></i>
+          Main API
+        </div>
+        <div class="tab" data-tab="callbacks">
+          <i class="fas fa-plug"></i>
+          Callbacks
+        </div>
+        <div class="tab" data-tab="client-options">
+          <i class="fas fa-cogs"></i>
+          Client Options
+        </div>
+        <div class="tab" data-tab="entities">
+          <i class="fas fa-users"></i>
+          Entity Settings
+        </div>
+        <div class="tab" data-tab="mobs">
+          <i class="fas fa-paw"></i>
+          Mob Settings
+        </div>
+        <div class="tab" data-tab="particles">
+          <i class="fas fa-sparkles"></i>
+          Particles
+        </div>
+        <div class="tab" data-tab="sounds">
+          <i class="fas fa-volume-up"></i>
+          Sounds
+        </div>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <div id="content-container">
+        <!-- Content will be loaded here -->
+      </div>
+    </div>
+    
+    <!-- Search Results Modal -->
+    <div id="searchModal" class="modal-overlay">
+      <div class="search-modal">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span id="modalTitle">Search Results</span>
+          </div>
+          <button class="modal-close" id="modalClose">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-content" id="modalContent">
+          <!-- Search results will be populated here -->
+        </div>
+        <div class="modal-footer" id="modalFooter">
+          <!-- Footer content -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching functionality
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        // Add active class to clicked tab
+        tab.classList.add('active');
+        
+        // Load content for this tab
+        const tabName = tab.dataset.tab;
+        loadContent(tabName);
+      });
+    });
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const searchStats = document.getElementById('search-stats');
+    let allFilesContent = {};
+    
+    // Load all files content for cross-file search
+    async function loadAllFiles() {
+      const files = [
+        {name: 'main', file: 'main.md'},
+        {name: 'callbacks', file: 'CALLBACKS.md'},
+        {name: 'client-options', file: 'CLIENT_OPTIONS.md'},
+        {name: 'entities', file: 'ENTITY_SETTINGS.md'},
+        {name: 'mobs', file: 'MOB_SETTINGS.md'},
+        {name: 'particles', file: 'PARTICLES.md'},
+        {name: 'sounds', file: 'SOUND_NAMES.md'}
+      ];
+      
+      for (const fileInfo of files) {
+        try {
+          const response = await fetch(`../Bloxd API/${fileInfo.file}`);
+          const content = await response.text();
+          allFilesContent[fileInfo.name] = content;
+        } catch (error) {
+          console.error(`Failed to load ${fileInfo.file}:`, error);
+        }
+      }
+    }
+    
+    // Initialize by loading all files
+    loadAllFiles();
+    
+    searchInput.addEventListener('input', debounce(function() {
+      const searchTerm = this.value.trim();
+      if (searchTerm.length === 0) {
+        searchStats.style.display = 'none';
+      }
+    }, 300));
+    
+    // Handle Enter key to show modal
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && this.value.trim().length > 0) {
+        e.preventDefault();
+        showSearchModal(this.value.trim());
+      }
+    });
+
+    // Debounce function to limit search frequency
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    // Load content for a specific tab
+    async function loadContent(tabName) {
+      const container = document.getElementById('content-container');
+      container.innerHTML = '<div class="no-results">Loading...</div>';
+      
+      try {
+        let fileName;
+        switch(tabName) {
+          case 'main':
+            fileName = 'main.md';
+            break;
+          case 'callbacks':
+            fileName = 'CALLBACKS.md';
+            break;
+          case 'client-options':
+            fileName = 'CLIENT_OPTIONS.md';
+            break;
+          case 'entities':
+            fileName = 'ENTITY_SETTINGS.md';
+            break;
+          case 'mobs':
+            fileName = 'MOB_SETTINGS.md';
+            break;
+          case 'particles':
+            fileName = 'PARTICLES.md';
+            break;
+          case 'sounds':
+            fileName = 'SOUND_NAMES.md';
+            break;
+          default:
+            fileName = 'main.md';
+        }
+        
+        const response = await fetch(`../Bloxd API/${fileName}`);
+        const markdown = await response.text();
+        const html = convertMarkdownToHTML(markdown);
+        container.innerHTML = html;
+        
+        // Store original content for search
+        container.dataset.originalContent = html;
+      } catch (error) {
+        container.innerHTML = `<div class="no-results">Failed to load content: ${error.message}</div>`;
+      }
+    }
+
+    // Convert markdown to HTML
+    function convertMarkdownToHTML(markdown) {
+      let html = markdown;
+      
+      // Convert headers
+      html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+      html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+      html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+      
+      // Convert code blocks
+      html = html.replace(/```js([\s\S]*?)```/g, '<pre><code class="language-js">$1</code></pre>');
+      html = html.replace(/```text([\s\S]*?)```/g, '<pre><code class="language-text">$1</code></pre>');
+      html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+      
+      // Convert inline code
+      html = html.replace(/`(.*?)`/g, '<code>$1</code>');
+      
+      // Convert lists
+      html = html.replace(/^\* (.*$)/gm, '<li>$1</li>');
+      html = html.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
+      
+      // Convert paragraphs
+      html = html.replace(/^\n/gm, '</p><p>');
+      html = '<p>' + html + '</p>';
+      html = html.replace(/<p><\/p>/g, '');
+      
+      // Clean up
+      html = html.replace(/\n/g, '<br>');
+      
+      return `<div class="api-content">${html}</div>`;
+    }
+
+    // Search across all files and highlight matches
+    function searchAcrossFiles(searchTerm) {
+      const container = document.getElementById('content-container');
+      const results = [];
+      const searchTerms = searchTerm.toLowerCase().split(' ').filter(term => term.length > 0);
+      
+      // Search through all loaded files
+      Object.keys(allFilesContent).forEach(fileName => {
+        const content = allFilesContent[fileName];
+        if (!content) return;
+        
+        const lines = content.split('\n');
+        lines.forEach((line, lineNumber) => {
+          const lineLower = line.toLowerCase();
+          const matchesAllTerms = searchTerms.every(term => lineLower.includes(term));
+          
+          if (matchesAllTerms && line.trim().length > 0) {
+            results.push({
+              fileName: fileName,
+              lineNumber: lineNumber + 1,
+              content: line.trim(),
+              fullLine: line
+            });
+          }
+        });
+      });
+      
+      // Display results
+      displaySearchResults(results, searchTerm);
+      
+      // Update search stats
+      searchStats.textContent = `Found ${results.length} matches across all files`;
+      searchStats.style.display = results.length > 0 ? 'block' : 'block';
+    }
+    
+    // Display search results with highlighting
+    function displaySearchResults(results, searchTerm) {
+      const container = document.getElementById('content-container');
+      const searchTerms = searchTerm.toLowerCase().split(' ').filter(term => term.length > 0);
+      
+      if (results.length === 0) {
+        container.innerHTML = `
+          <div class="no-results">
+            <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 20px; color: #ff6b39;"></i>
+            <div>No results found for "${searchTerm}"</div>
+            <div style="font-size: 0.9rem; margin-top: 10px; color: #777;">Try different keywords or check your spelling</div>
+          </div>
+        `;
+        return;
+      }
+      
+      // Group results by file
+      const groupedResults = {};
+      results.forEach(result => {
+        if (!groupedResults[result.fileName]) {
+          groupedResults[result.fileName] = [];
+        }
+        groupedResults[result.fileName].push(result);
+      });
+      
+      let html = `
+        <div class="api-content">
+          <h1><i class="fas fa-search"></i> Search Results for "${searchTerm}"</h1>
+          <p style="color: #a0a0a0; margin-bottom: 25px;">${results.length} matches found across ${Object.keys(groupedResults).length} files</p>
+      `;
+      
+      // Display results grouped by file
+      Object.keys(groupedResults).forEach(fileName => {
+        const fileResults = groupedResults[fileName];
+        const tabName = getTabDisplayName(fileName);
+        
+        html += `
+          <div class="method-card" style="margin-bottom: 30px;">
+            <h2 style="color: #ff8c5a; display: flex; align-items: center; gap: 10px;">
+              <i class="fas ${getTabIcon(fileName)}"></i>
+              ${tabName}
+              <span style="font-size: 1rem; color: #a0a0a0; font-weight: normal;">(${fileResults.length} matches)</span>
+            </h2>
+        `;
+        
+        fileResults.forEach(result => {
+          // Highlight search terms in the content
+          let highlightedContent = result.content;
+          searchTerms.forEach(term => {
+            const regex = new RegExp(`(${term})`, 'gi');
+            highlightedContent = highlightedContent.replace(regex, '<mark style="background: #ff6b39; color: white; padding: 2px 4px; border-radius: 3px;">$1</mark>');
+          });
+          
+          html += `
+            <div class="method-card" style="margin: 15px 0; background: rgba(255,255,255,0.03); border-left: 3px solid #ff6b39;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span class="param-name">Line ${result.lineNumber}</span>
+                <button onclick="switchToFile('${fileName}')" 
+                        style="background: #ff6b39; border: none; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem;">
+                  View in ${tabName}
+                </button>
+              </div>
+              <div style="font-family: 'Courier New', monospace; font-size: 0.9rem; color: #e8e8e8; line-height: 1.4;">
+                ${highlightedContent}
+              </div>
+            </div>
+          `;
+        });
+        
+        html += `</div>`;
+      });
+      
+      html += `</div>`;
+      container.innerHTML = html;
+    }
+    
+    // Helper functions for search results
+    function getTabDisplayName(fileName) {
+      const names = {
+        'main': 'Main API',
+        'callbacks': 'Callbacks',
+        'client-options': 'Client Options',
+        'entities': 'Entity Settings',
+        'mobs': 'Mob Settings',
+        'particles': 'Particles',
+        'sounds': 'Sounds'
+      };
+      return names[fileName] || fileName;
+    }
+    
+    function getTabIcon(fileName) {
+      const icons = {
+        'main': 'fa-book',
+        'callbacks': 'fa-plug',
+        'client-options': 'fa-cogs',
+        'entities': 'fa-users',
+        'mobs': 'fa-paw',
+        'particles': 'fa-sparkles',
+        'sounds': 'fa-volume-up'
+      };
+      return icons[fileName] || 'fa-file';
+    }
+    
+    // Function to switch to a specific file/tab
+    function switchToFile(fileName) {
+      // Activate the corresponding tab
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.dataset.tab === fileName) {
+          tab.classList.add('active');
+        }
+      });
+      
+      // Load the content
+      loadContent(fileName);
+      
+      // Clear search after switching
+      searchInput.value = '';
+      searchStats.style.display = 'none';
+    }
+    
+    // Make switchToFile globally available
+    window.switchToFile = switchToFile;
+
+    // Make search functions globally available for button callbacks
+    window.searchAcrossFiles = searchAcrossFiles;
+    
+    // Modal functionality
+    const modal = document.getElementById('searchModal');
+    const modalClose = document.getElementById('modalClose');
+    const modalContent = document.getElementById('modalContent');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalFooter = document.getElementById('modalFooter');
+    
+    // Show search results in modal
+    function showSearchModal(searchTerm) {
+      const results = searchAcrossFilesInternal(searchTerm);
+      displayModalResults(results, searchTerm);
+      modal.classList.add('active');
+      
+      // Focus trap for accessibility
+      modal.addEventListener('keydown', handleModalKeydown);
+      document.body.style.overflow = 'hidden';
+    }
+    
+    // Close modal
+    function closeModal() {
+      modal.classList.remove('active');
+      modal.removeEventListener('keydown', handleModalKeydown);
+      document.body.style.overflow = '';
+      searchInput.focus();
+    }
+    
+    // Handle keyboard navigation in modal
+    function handleModalKeydown(e) {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    }
+    
+    // Internal search function that returns results without displaying them
+    function searchAcrossFilesInternal(searchTerm) {
+      const results = [];
+      const searchTerms = searchTerm.toLowerCase().split(' ').filter(term => term.length > 0);
+      
+      // Search through all loaded files
+      Object.keys(allFilesContent).forEach(fileName => {
+        const content = allFilesContent[fileName];
+        if (!content) return;
+        
+        const lines = content.split('\n');
+        lines.forEach((line, lineNumber) => {
+          const lineLower = line.toLowerCase();
+          const matchesAllTerms = searchTerms.every(term => lineLower.includes(term));
+          
+          if (matchesAllTerms && line.trim().length > 0) {
+            results.push({
+              fileName: fileName,
+              lineNumber: lineNumber + 1,
+              content: line.trim(),
+              fullLine: line
+            });
+          }
+        });
+      });
+      
+      return results;
+    }
+    
+    // Display results in modal
+    function displayModalResults(results, searchTerm) {
+      const searchTerms = searchTerm.toLowerCase().split(' ').filter(term => term.length > 0);
+      
+      if (results.length === 0) {
+        modalTitle.innerHTML = `<i class="fas fa-search"></i> No Results Found`;
+        modalContent.innerHTML = `
+          <div class="no-results" style="padding: 40px;">
+            <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 20px; color: #ff6b39;"></i>
+            <div>No results found for "${searchTerm}"</div>
+            <div style="font-size: 0.9rem; margin-top: 10px; color: #777;">Try different keywords or check your spelling</div>
+          </div>
+        `;
+        modalFooter.innerHTML = '';
+        return;
+      }
+      
+      // Group results by file
+      const groupedResults = {};
+      results.forEach(result => {
+        if (!groupedResults[result.fileName]) {
+          groupedResults[result.fileName] = [];
+        }
+        groupedResults[result.fileName].push(result);
+      });
+      
+      modalTitle.innerHTML = `<i class="fas fa-search"></i> Search Results for "${searchTerm}"`;
+      
+      let html = '';
+      
+      // Display results grouped by file
+      Object.keys(groupedResults).forEach(fileName => {
+        const fileResults = groupedResults[fileName];
+        const tabName = getTabDisplayName(fileName);
+        const iconClass = getTabIcon(fileName);
+        
+        html += `
+          <div style="margin-bottom: 25px;">
+            <h3 style="color: #ff8c5a; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px solid #3a3939;">
+              <i class="fas ${iconClass}"></i>
+              ${tabName}
+              <span style="font-size: 1rem; color: #a0a0a0; font-weight: normal;">(${fileResults.length} matches)</span>
+            </h3>
+        `;
+        
+        fileResults.forEach(result => {
+          // Highlight search terms in the content
+          let highlightedContent = result.content;
+          searchTerms.forEach(term => {
+            const regex = new RegExp(`(${term})`, 'gi');
+            highlightedContent = highlightedContent.replace(regex, '<mark style="background: #ff6b39; color: white; padding: 2px 4px; border-radius: 3px;">$1</mark>');
+          });
+          
+          html += `
+            <div class="search-result-item">
+              <div class="result-header">
+                <div class="result-file">
+                  <i class="fas ${iconClass}"></i>
+                  ${tabName}
+                </div>
+                <div class="result-line">Line ${result.lineNumber}</div>
+              </div>
+              <div class="result-content">
+                ${highlightedContent}
+              </div>
+              <div style="margin-top: 12px; text-align: right;">
+                <button class="view-button" onclick="viewResultInTab('${fileName}')">
+                  <i class="fas fa-external-link-alt"></i>
+                  View in ${tabName}
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        
+        html += `</div>`;
+      });
+      
+      modalContent.innerHTML = html;
+      modalFooter.innerHTML = `${results.length} matches found across ${Object.keys(groupedResults).length} files`;
+    }
+    
+    // Function to view result in specific tab
+    function viewResultInTab(fileName) {
+      closeModal();
+      switchToFile(fileName);
+    }
+    
+    // Make modal functions globally available
+    window.showSearchModal = showSearchModal;
+    window.viewResultInTab = viewResultInTab;
+    
+    // Event listeners for modal
+    modalClose.addEventListener('click', closeModal);
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+    
+    // Load initial content
+    loadContent('main');
+  </script>
+</body>
+</html>
