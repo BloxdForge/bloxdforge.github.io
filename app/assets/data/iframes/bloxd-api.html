@@ -277,7 +277,6 @@
       font-size: 1.1rem;
     }
     
-    /* Modal Styles */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -487,7 +486,7 @@
           Mob Settings
         </div>
         <div class="tab" data-tab="particles">
-          <i class="fas fa-sparkles"></i>
+          <i class="fas fa-star"></i>
           Particles
         </div>
         <div class="tab" data-tab="sounds">
@@ -499,11 +498,9 @@
 
     <div class="content-area">
       <div id="content-container">
-        <!-- Content will be loaded here -->
       </div>
     </div>
     
-    <!-- Search Results Modal -->
     <div id="searchModal" class="modal-overlay">
       <div class="search-modal">
         <div class="modal-header">
@@ -515,36 +512,28 @@
           </button>
         </div>
         <div class="modal-content" id="modalContent">
-          <!-- Search results will be populated here -->
         </div>
         <div class="modal-footer" id="modalFooter">
-          <!-- Footer content -->
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // Tab switching functionality
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => {
-        // Remove active class from all tabs
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        // Add active class to clicked tab
         tab.classList.add('active');
         
-        // Load content for this tab
         const tabName = tab.dataset.tab;
         loadContent(tabName);
       });
     });
 
-    // Search functionality
     const searchInput = document.getElementById('searchInput');
     const searchStats = document.getElementById('search-stats');
     let allFilesContent = {};
     
-    // Load all files content for cross-file search
     async function loadAllFiles() {
       const files = [
         {name: 'main', file: 'main.md'},
@@ -567,7 +556,6 @@
       }
     }
     
-    // Initialize by loading all files
     loadAllFiles();
     
     searchInput.addEventListener('input', debounce(function() {
@@ -577,7 +565,6 @@
       }
     }, 300));
     
-    // Handle Enter key to show modal
     searchInput.addEventListener('keypress', function(e) {
       if (e.key === 'Enter' && this.value.trim().length > 0) {
         e.preventDefault();
@@ -585,7 +572,6 @@
       }
     });
 
-    // Debounce function to limit search frequency
     function debounce(func, wait) {
       let timeout;
       return function executedFunction(...args) {
@@ -598,7 +584,6 @@
       };
     }
 
-    // Load content for a specific tab
     async function loadContent(tabName) {
       const container = document.getElementById('content-container');
       container.innerHTML = '<div class="no-results">Loading...</div>';
@@ -636,52 +621,42 @@
         const html = convertMarkdownToHTML(markdown);
         container.innerHTML = html;
         
-        // Store original content for search
         container.dataset.originalContent = html;
       } catch (error) {
         container.innerHTML = `<div class="no-results">Failed to load content: ${error.message}</div>`;
       }
     }
 
-    // Convert markdown to HTML
     function convertMarkdownToHTML(markdown) {
       let html = markdown;
       
-      // Convert headers
       html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
       html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
       html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
       
-      // Convert code blocks
       html = html.replace(/```js([\s\S]*?)```/g, '<pre><code class="language-js">$1</code></pre>');
       html = html.replace(/```text([\s\S]*?)```/g, '<pre><code class="language-text">$1</code></pre>');
       html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
       
-      // Convert inline code
       html = html.replace(/`(.*?)`/g, '<code>$1</code>');
       
-      // Convert lists
       html = html.replace(/^\* (.*$)/gm, '<li>$1</li>');
       html = html.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
       
-      // Convert paragraphs
       html = html.replace(/^\n/gm, '</p><p>');
       html = '<p>' + html + '</p>';
       html = html.replace(/<p><\/p>/g, '');
       
-      // Clean up
       html = html.replace(/\n/g, '<br>');
       
       return `<div class="api-content">${html}</div>`;
     }
 
-    // Search across all files and highlight matches
     function searchAcrossFiles(searchTerm) {
       const container = document.getElementById('content-container');
       const results = [];
       const searchTerms = searchTerm.toLowerCase().split(' ').filter(term => term.length > 0);
       
-      // Search through all loaded files
       Object.keys(allFilesContent).forEach(fileName => {
         const content = allFilesContent[fileName];
         if (!content) return;
@@ -702,15 +677,12 @@
         });
       });
       
-      // Display results
       displaySearchResults(results, searchTerm);
       
-      // Update search stats
       searchStats.textContent = `Found ${results.length} matches across all files`;
       searchStats.style.display = results.length > 0 ? 'block' : 'block';
     }
     
-    // Display search results with highlighting
     function displaySearchResults(results, searchTerm) {
       const container = document.getElementById('content-container');
       const searchTerms = searchTerm.toLowerCase().split(' ').filter(term => term.length > 0);
@@ -726,7 +698,6 @@
         return;
       }
       
-      // Group results by file
       const groupedResults = {};
       results.forEach(result => {
         if (!groupedResults[result.fileName]) {
@@ -741,7 +712,6 @@
           <p style="color: #a0a0a0; margin-bottom: 25px;">${results.length} matches found across ${Object.keys(groupedResults).length} files</p>
       `;
       
-      // Display results grouped by file
       Object.keys(groupedResults).forEach(fileName => {
         const fileResults = groupedResults[fileName];
         const tabName = getTabDisplayName(fileName);
@@ -756,7 +726,6 @@
         `;
         
         fileResults.forEach(result => {
-          // Highlight search terms in the content
           let highlightedContent = result.content;
           searchTerms.forEach(term => {
             const regex = new RegExp(`(${term})`, 'gi');
@@ -786,7 +755,6 @@
       container.innerHTML = html;
     }
     
-    // Helper functions for search results
     function getTabDisplayName(fileName) {
       const names = {
         'main': 'Main API',
@@ -813,9 +781,7 @@
       return icons[fileName] || 'fa-file';
     }
     
-    // Function to switch to a specific file/tab
     function switchToFile(fileName) {
-      // Activate the corresponding tab
       document.querySelectorAll('.tab').forEach(tab => {
         tab.classList.remove('active');
         if (tab.dataset.tab === fileName) {
@@ -823,39 +789,31 @@
         }
       });
       
-      // Load the content
       loadContent(fileName);
       
-      // Clear search after switching
       searchInput.value = '';
       searchStats.style.display = 'none';
     }
     
-    // Make switchToFile globally available
     window.switchToFile = switchToFile;
 
-    // Make search functions globally available for button callbacks
     window.searchAcrossFiles = searchAcrossFiles;
     
-    // Modal functionality
     const modal = document.getElementById('searchModal');
     const modalClose = document.getElementById('modalClose');
     const modalContent = document.getElementById('modalContent');
     const modalTitle = document.getElementById('modalTitle');
     const modalFooter = document.getElementById('modalFooter');
     
-    // Show search results in modal
     function showSearchModal(searchTerm) {
       const results = searchAcrossFilesInternal(searchTerm);
       displayModalResults(results, searchTerm);
       modal.classList.add('active');
       
-      // Focus trap for accessibility
       modal.addEventListener('keydown', handleModalKeydown);
       document.body.style.overflow = 'hidden';
     }
     
-    // Close modal
     function closeModal() {
       modal.classList.remove('active');
       modal.removeEventListener('keydown', handleModalKeydown);
@@ -863,19 +821,16 @@
       searchInput.focus();
     }
     
-    // Handle keyboard navigation in modal
     function handleModalKeydown(e) {
       if (e.key === 'Escape') {
         closeModal();
       }
     }
     
-    // Internal search function that returns results without displaying them
     function searchAcrossFilesInternal(searchTerm) {
       const results = [];
       const searchTerms = searchTerm.toLowerCase().split(' ').filter(term => term.length > 0);
       
-      // Search through all loaded files
       Object.keys(allFilesContent).forEach(fileName => {
         const content = allFilesContent[fileName];
         if (!content) return;
@@ -899,7 +854,6 @@
       return results;
     }
     
-    // Display results in modal
     function displayModalResults(results, searchTerm) {
       const searchTerms = searchTerm.toLowerCase().split(' ').filter(term => term.length > 0);
       
@@ -916,7 +870,6 @@
         return;
       }
       
-      // Group results by file
       const groupedResults = {};
       results.forEach(result => {
         if (!groupedResults[result.fileName]) {
@@ -929,7 +882,6 @@
       
       let html = '';
       
-      // Display results grouped by file
       Object.keys(groupedResults).forEach(fileName => {
         const fileResults = groupedResults[fileName];
         const tabName = getTabDisplayName(fileName);
@@ -945,7 +897,6 @@
         `;
         
         fileResults.forEach(result => {
-          // Highlight search terms in the content
           let highlightedContent = result.content;
           searchTerms.forEach(term => {
             const regex = new RegExp(`(${term})`, 'gi');
@@ -981,17 +932,14 @@
       modalFooter.innerHTML = `${results.length} matches found across ${Object.keys(groupedResults).length} files`;
     }
     
-    // Function to view result in specific tab
     function viewResultInTab(fileName) {
       closeModal();
       switchToFile(fileName);
     }
     
-    // Make modal functions globally available
     window.showSearchModal = showSearchModal;
     window.viewResultInTab = viewResultInTab;
     
-    // Event listeners for modal
     modalClose.addEventListener('click', closeModal);
     modal.addEventListener('click', function(e) {
       if (e.target === modal) {
@@ -999,7 +947,6 @@
       }
     });
     
-    // Load initial content
     loadContent('main');
   </script>
 </body>
