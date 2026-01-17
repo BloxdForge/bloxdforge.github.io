@@ -1128,6 +1128,7 @@
                   <div class="upgrade-section">
                     <h4>Upgrade Options</h4>
                     <button class="auth-btn" id="open-upgrade-btn">Upgrade with Ads</button>
+                    <button class="auth-btn" id="open-game-upgrade-btn">Play Game to Upgrade (4 Days)</button>
 
                     <h4>Redeem Code</h4>
                     <div style="display: flex; gap: 8px; margin-bottom: 10px;">
@@ -2279,6 +2280,30 @@
       document.body.appendChild(closeBtn);
     });
 
+    // Game Upgrade Modal Variables
+    let gameTimerInterval = null;
+    let gameTimerSeconds = 300; // 5 minutes
+    let gameUpgradeUsed = localStorage.getItem('gameUpgradeUsed') === 'true';
+
+    document.getElementById('open-game-upgrade-btn').addEventListener('click', function () {
+      if (!CURRENT_USER?.username) {
+        showNotification('Please sign in first');
+        return;
+      }
+
+      if (checkIfUserIsBanned(CURRENT_USER.username)) {
+        showBanPopup();
+        return;
+      }
+
+      if (gameUpgradeUsed) {
+        showNotification('You have already used this upgrade method');
+        return;
+      }
+
+      showGameUpgradeModal();
+    });
+
     document.getElementById('redeem-code-btn').addEventListener('click', function () {
       const codeInput = document.getElementById('code-input');
       const codeMessage = document.getElementById('code-message');
@@ -2575,6 +2600,270 @@
       setTimeout(() => {
         notification.classList.remove('show');
       }, 3000);
+    }
+
+    function showGameUpgradeModal() {
+      // Create modal overlay
+      const modal = document.createElement('div');
+      modal.id = 'game-upgrade-modal';
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        backdrop-filter: blur(5px);
+      `;
+
+      const modalContent = document.createElement('div');
+      modalContent.style.cssText = `
+        background: linear-gradient(145deg, #262525, #212020);
+        border: 1px solid #444343;
+        border-radius: 20px;
+        padding: 30px;
+        width: 90%;
+        max-width: 500px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        position: relative;
+      `;
+
+      const header = document.createElement('h2');
+      header.textContent = 'Game Reward';
+      header.style.cssText = `
+        color: #e0e0e0;
+        margin: 0 0 20px 0;
+        font-size: 1.8rem;
+        font-weight: 700;
+      `;
+
+      const description = document.createElement('p');
+      description.textContent = 'Play my game for 5 minutes to earn 4 days of Pro!';
+      description.style.cssText = `
+        color: #a0a0a0;
+        margin: 0 0 25px 0;
+        font-size: 1.1rem;
+        line-height: 1.5;
+      `;
+
+      const timerDisplay = document.createElement('div');
+      timerDisplay.id = 'game-timer-display';
+      timerDisplay.textContent = '05:00';
+      timerDisplay.style.cssText = `
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #ff6b39;
+        margin: 20px 0;
+        font-family: monospace;
+      `;
+
+      // Play button
+      const playButton = document.createElement('button');
+      playButton.id = 'play-game-btn';
+      playButton.textContent = 'Start Playing!';
+      playButton.style.cssText = `
+        background: linear-gradient(145deg, #ff6b39, #e55a2e);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        cursor: pointer;
+        margin: 15px 0;
+        width: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 107, 57, 0.3);
+      `;
+
+      playButton.addEventListener('mouseover', () => {
+        playButton.style.transform = 'translateY(-2px)';
+        playButton.style.boxShadow = '0 6px 20px rgba(255, 107, 57, 0.4)';
+      });
+
+      playButton.addEventListener('mouseout', () => {
+        playButton.style.transform = 'translateY(0)';
+        playButton.style.boxShadow = '0 4px 15px rgba(255, 107, 57, 0.3)';
+      });
+
+      // Close button
+      const closeButton = document.createElement('button');
+      closeButton.id = 'game-modal-close';
+      closeButton.innerHTML = '×';
+      closeButton.style.cssText = `
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #a0a0a0;
+        border: 1px solid #444343;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        font-size: 1.5rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      `;
+
+      closeButton.addEventListener('mouseover', () => {
+        closeButton.style.background = 'rgba(255, 255, 255, 0.2)';
+        closeButton.style.borderColor = '#ff6b39';
+        closeButton.style.color = '#ff6b39';
+      });
+
+      closeButton.addEventListener('mouseout', () => {
+        closeButton.style.background = 'rgba(255, 255, 255, 0.1)';
+        closeButton.style.borderColor = '#444343';
+        closeButton.style.color = '#a0a0a0';
+      });
+
+      // Assemble modal
+      modalContent.appendChild(closeButton);
+      modalContent.appendChild(header);
+      modalContent.appendChild(description);
+      modalContent.appendChild(timerDisplay);
+      modalContent.appendChild(playButton);
+      modal.appendChild(modalContent);
+      document.body.appendChild(modal);
+
+      // Event listeners
+      playButton.addEventListener('click', startGameChallenge);
+      closeButton.addEventListener('click', closeGameModal);
+      // Removed click-outside-to-close functionality to prevent accidental closure during game
+    }
+
+    function startGameChallenge() {
+      const playButton = document.getElementById('play-game-btn');
+      const timerDisplay = document.getElementById('game-timer-display');
+      const closeButton = document.getElementById('game-modal-close');
+      
+      // Open game in new tab
+      window.open('https://aix-32.github.io/CoreGrid/', '_blank');
+      
+      // Hide close button
+      if (closeButton) {
+        closeButton.style.display = 'none';
+      }
+      
+      // Disable play button and update style to match other buttons
+      playButton.disabled = true;
+      playButton.textContent = 'Playing... Come back in 5 minutes!';
+      playButton.style.background = 'linear-gradient(145deg, #262525, #1b1a1a)';
+      playButton.style.border = '1px solid #444343';
+      playButton.style.color = '#e0e0e0';
+      playButton.style.cursor = 'not-allowed';
+      playButton.style.opacity = '0.7';
+      
+      // Start timer
+      gameTimerSeconds = 300; // Reset to 5 minutes
+      updateTimerDisplay(timerDisplay);
+      
+      gameTimerInterval = setInterval(() => {
+        gameTimerSeconds--;
+        updateTimerDisplay(timerDisplay);
+        
+        if (gameTimerSeconds <= 0) {
+          clearInterval(gameTimerInterval);
+          completeGameChallenge();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay(displayElement) {
+      const minutes = Math.floor(gameTimerSeconds / 60);
+      const seconds = gameTimerSeconds % 60;
+      displayElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      // Change color when time is running low
+      if (gameTimerSeconds <= 60) {
+        displayElement.style.color = '#ff4757';
+      } else {
+        displayElement.style.color = '#ff6b39';
+      }
+    }
+
+    function completeGameChallenge() {
+      // Clear interval just in case
+      if (gameTimerInterval) {
+        clearInterval(gameTimerInterval);
+        gameTimerInterval = null;
+      }
+      
+      // Mark as used
+      gameUpgradeUsed = true;
+      localStorage.setItem('gameUpgradeUsed', 'true');
+      
+      // Grant 4 days of Pro status
+      upgradeUserToProFourDays();
+      
+      // Show success message
+      showNotification('🎉 Congratulations! You earned 4 days of Pro status!');
+      
+      // Close modal
+      closeGameModal();
+    }
+
+    function closeGameModal() {
+      const modal = document.getElementById('game-upgrade-modal');
+      if (modal) {
+        modal.remove();
+      }
+      
+      // Clear timer if it's running
+      if (gameTimerInterval) {
+        clearInterval(gameTimerInterval);
+        gameTimerInterval = null;
+      }
+    }
+
+    async function upgradeUserToProFourDays() {
+      if (!CURRENT_USER?.username) return;
+      
+      try {
+        const expirationTime = new Date(Date.now() + 4 * 24 * 60 * 60 * 1000); // 4 days
+        const payload = {
+          description: profileDescription.value.trim() || 'Pro User',
+          section: 'Pro',
+          savedAt: new Date().toISOString(),
+          app: 'Facet',
+          upgradedAt: new Date().toISOString(),
+          proExpiration: expirationTime.toISOString()
+        };
+        
+        await puter.fs.write(filenameForUser(), JSON.stringify(payload, null, 2));
+        
+        profileSection.value = 'Pro';
+        applyVipStyle('Pro');
+        updateUserRank('Pro');
+        
+        if (CURRENT_USER) {
+          CURRENT_USER.userType = 'Pro';
+          CURRENT_USER.proExpiration = expirationTime.toISOString();
+          saveToLocalStorage('Facet-user', CURRENT_USER);
+        }
+        
+        manageAdsForUserType('Pro');
+        
+        profileForm.style.display = 'none';
+        profileData.style.display = 'block';
+        profileData.innerHTML = `Description: ${payload.description}\nAccount Type: Pro (Expires in 4 days)\n\n<button class="auth-btn" onclick="showEditForm()">Edit Profile</button>`;
+        
+        if (authUserRank) {
+          authUserRank.textContent = 'Pro (4d)';
+        }
+        
+      } catch (e) {
+        showNotification('Error upgrading to Pro');
+        console.error(e);
+      }
     }
 
     if (localStorage.getItem("popupinfo")) {
