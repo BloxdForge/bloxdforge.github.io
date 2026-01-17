@@ -56,12 +56,18 @@
 
     .creator-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
       gap: 25px;
+    }
+    
+    @media (min-width: 1000px) {
+      .creator-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
 
     .wide-button {
-      grid-column: span 2;
+      grid-column: 1 / -1;
       background: linear-gradient(45deg, #ff6b39, #ff8c5a);
       border: none;
       color: white;
@@ -386,9 +392,7 @@
       height: 100%;
       border: none;
       min-height: 400px;
-      /* Ensure minimum height for content */
       flex: 1;
-      /* Make iframe take available space in flex container */
     }
 
     .window-content.iframe-only {
@@ -470,6 +474,14 @@
         <div class="btn-content">Convert your images into plans for building them in game.</div>
       </div>
 
+      <div class="big-btn" data-url="./data/iframes/bloxd-api.html">
+        <div class="btn-title">Bloxd API Explorer</div>
+        <div class="btn-image"
+          style="background-color: #2a2a2a; display: flex; align-items: center; justify-content: center;">
+          <i class="fas fa-code" style="font-size: 4rem; color: #ff6b39;"></i>
+        </div>
+        <div class="btn-content">Explore the complete Bloxd JavaScript API documentation with interactive examples.</div>
+      </div>
 
       <div class="big-btn" data-url="./data/iframes/ForceForge.html">
         <div class="btn-title">ForceFace Coder</div>
@@ -480,14 +492,7 @@
         <div class="btn-content">Its not good.</div>
       </div>
 
-      <div class="big-btn" data-url="./data/iframes/bloxd-api.html">
-        <div class="btn-title">Bloxd API Explorer</div>
-        <div class="btn-image"
-          style="background-color: #2a2a2a; display: flex; align-items: center; justify-content: center;">
-          <i class="fas fa-code" style="font-size: 4rem; color: #ff6b39;"></i>
-        </div>
-        <div class="btn-content">Explore the complete Bloxd JavaScript API documentation with interactive examples.</div>
-      </div>
+
     </div>
   </div>
 
