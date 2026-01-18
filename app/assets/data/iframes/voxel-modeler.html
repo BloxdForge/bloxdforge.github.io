@@ -1472,23 +1472,105 @@
           return;
         }
         
-        const exporter = new THREE.GLTFExporter();
-        const objects = Array.from(this.voxels.values());
+        console.log(`Starting export of ${this.voxels.size} voxels`);
         
-        const group = new THREE.Group();
-        objects.forEach(obj => {
-          group.add(obj.clone());
+        // Create a fresh group for export
+        const exportGroup = new THREE.Group();
+        
+        // Counter for successful exports
+        let successfulExports = 0;
+        let failedExports = 0;
+        
+        // Iterate through all voxels in the map
+        this.voxels.forEach((originalVoxel, key) => {
+          try {
+            // Create a completely new voxel instead of cloning
+            const geometry = new THREE.BoxGeometry(
+              this.voxelSize,
+              this.voxelSize,
+              this.voxelSize
+            );
+            
+            // Create new material with the same color
+            const material = new THREE.MeshLambertMaterial({
+              color: originalVoxel.material.color
+            });
+            
+            const newVoxel = new THREE.Mesh(geometry, material);
+            
+            // Copy position
+            newVoxel.position.copy(originalVoxel.position);
+            
+            // Copy rotation if it exists
+            if (originalVoxel.rotation) {
+              newVoxel.rotation.copy(originalVoxel.rotation);
+            }
+            
+            // Copy scale if it exists
+            if (originalVoxel.scale) {
+              newVoxel.scale.copy(originalVoxel.scale);
+            }
+            
+            // Add to export group
+            exportGroup.add(newVoxel);
+            successfulExports++;
+            
+            console.log(`Exported voxel at ${key}: position=${newVoxel.position.toArray()}`);
+            
+          } catch (error) {
+            console.error(`Failed to export voxel ${key}:`, error);
+            failedExports++;
+          }
         });
         
-        exporter.parse(group, (result) => {
-          const blob = new Blob([result], { type: 'application/octet-stream' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `voxel-model-${Date.now()}.glb`;
-          a.click();
-          URL.revokeObjectURL(url);
-        }, { binary: true });
+        console.log(`Export preparation complete:`);
+        console.log(`  Successful: ${successfulExports}`);
+        console.log(`  Failed: ${failedExports}`);
+        console.log(`  Total in map: ${this.voxels.size}`);
+        console.log(`  Export group children: ${exportGroup.children.length}`);
+        
+        if (exportGroup.children.length === 0) {
+          alert('Error: No voxels could be prepared for export!');
+          return;
+        }
+        
+        if (failedExports > 0) {
+          console.warn(`${failedExports} voxels failed to export`);
+        }
+        
+        // Use GLTF exporter
+        const exporter = new THREE.GLTFExporter();
+        
+        exporter.parse(exportGroup, (result) => {
+          try {
+            // Create blob and download
+            const blob = new Blob([result], { type: 'model/gltf-binary' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `voxel-model-${Date.now()}.glb`;
+            
+            // Add to DOM, click, then remove
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            // Clean up
+            URL.revokeObjectURL(url);
+            
+            console.log('Export completed successfully!');
+            alert(`Export successful! Exported ${exportGroup.children.length} voxels.`);
+            
+          } catch (error) {
+            console.error('Export failed:', error);
+            alert('Export failed: ' + error.message);
+          }
+        }, { 
+          binary: true,
+          onlyVisible: false,
+          truncateDrawRange: false,
+          embedImages: true
+        });
       }
       
       onWindowResize() {
