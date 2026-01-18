@@ -1746,7 +1746,7 @@
             overflow: hidden;
             display: none;
         }
-        
+
         .tpack-preview-area.preview-active {
             position: absolute;
             top: 0;
@@ -1756,13 +1756,13 @@
             height: 450px;
             pointer-events: auto;
         }
-        
 
-        
+
+
         .tpack-canvas:not(.preview-active) .tpack-preview-area {
             pointer-events: none;
         }
-        
+
         .tpack-canvas {
             flex: 1;
             display: flex;
@@ -1776,7 +1776,7 @@
             overflow: hidden;
             z-index: 1;
         }
-        
+
         .tpack-canvas.preview-active {
             position: relative;
             min-height: 450px;
@@ -2805,6 +2805,7 @@
                 rightColumn.appendChild(addButton);
             }
         }
+
         function addScriptInput(container) {
             const scriptCount = container.querySelectorAll('.script-input-group').length + 1;
             const inputGroup = document.createElement('div');
