@@ -3,8 +3,13 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#141313">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Facet/Bloxd 5.4</title>
   <link rel="icon" href="/favicon.ico" type="image/png">
+  <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://js.puter.com/v2/"></script>
   <style>
@@ -44,7 +49,7 @@
       justify-content: flex-start;
     }
 
-    .container.pro-layout iframe {
+    .container.pro-layout #contentFrame {
       margin-right: 0 !important;
       flex: 1;
       width: calc(100% - 30vh - 20px);
@@ -70,7 +75,7 @@
       padding: 0;
       overflow: hidden;
       width: 20vh !important;
-      display: none !important;
+      display: none;
     }
 
     .right-sidebar iframe {
@@ -234,7 +239,10 @@
 
     iframe {
       flex: 1;
+      width: 100%;
       height: 100%;
+      min-width: 0;
+      display: block;
       border-radius: 35px;
       border: 1.5px solid #2c2b2b;
       background: #000;
@@ -616,6 +624,8 @@
       padding: 20px;
       width: 90%;
       max-width: 400px;
+      max-height: min(90vh, 720px);
+      overflow-y: auto;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(10px);
       transform: scale(0.8);
@@ -662,6 +672,7 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+      min-height: 0;
     }
 
     .upgrade-section {}
@@ -1107,6 +1118,244 @@
     .auth-btn:not(:last-child) {
       margin-bottom: 8px;
     }
+
+    .install-guide-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      z-index: 10050;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .install-guide-content {
+      width: 100%;
+      max-width: 560px;
+      background: linear-gradient(145deg, #262525, #212020);
+      border: 1px solid #444343;
+      border-radius: 16px;
+      padding: 20px;
+      color: #e0e0e0;
+    }
+
+    .install-guide-content h3 {
+      margin: 0 0 12px 0;
+      color: #ff8c5a;
+    }
+
+    .install-guide-content p {
+      margin: 0 0 12px 0;
+      color: #c4c4c4;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .install-guide-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    #mobile-landscape-lock {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10002;
+      background: radial-gradient(circle at center, #1f1b1b 0%, #141313 70%);
+      color: #f1f1f1;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+    }
+
+    #mobile-landscape-lock .lock-content {
+      max-width: 320px;
+    }
+
+    #mobile-landscape-lock .lock-icon {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+      color: #ff6b39;
+    }
+
+    #mobile-landscape-lock h2 {
+      margin: 0 0 8px 0;
+      font-size: 1.2rem;
+      color: #ffffff;
+    }
+
+    #mobile-landscape-lock p {
+      margin: 0;
+      color: #bdbdbd;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    @media ((max-width: 900px) or (max-height: 500px)) and (pointer: coarse) and (orientation: landscape) {
+      body {
+        overflow: hidden;
+      }
+
+      .container {
+        padding: 10px;
+        gap: 10px;
+      }
+
+      .sidebar {
+        width: 34vw;
+        max-width: 280px;
+        min-width: 210px;
+        border-radius: 22px;
+        padding: 14px 12px;
+      }
+
+      .logo {
+        display: none;
+      }
+
+      .card {
+        height: 68px;
+        padding: 11px 12px;
+        justify-content: center;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        align-content: start;
+      }
+
+      .card-title {
+        font-size: 0.92rem;
+        text-align: center;
+      }
+
+      .card-icon {
+        display: none;
+      }
+
+      .bottom-section {
+        border-top: none;
+        padding-top: 8px;
+      }
+
+      .cube-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 1.2rem;
+      }
+
+      .long-btn {
+        min-height: 44px;
+        font-size: 1.2rem;
+      }
+
+      .auth-user-info {
+        height: 54px;
+        padding: 8px 10px;
+      }
+
+      .auth-avatar {
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+      }
+
+      .auth-username {
+        font-size: 12px;
+      }
+
+      .auth-user-rank {
+        font-size: 10px;
+        margin-left: 4px;
+      }
+
+      .auth-menu-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 18px;
+      }
+
+      .auth-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+
+      .auth-popup {
+        padding: 0;
+        align-items: stretch;
+        justify-content: flex-start;
+      }
+
+      .auth-popup-content {
+        position: fixed;
+        inset: 0;
+        width: 100dvw;
+        max-width: none;
+        max-height: none;
+        height: 100dvh;
+        border-radius: 0;
+        border: none;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        transform: none;
+      }
+
+      .auth-popup-body {
+        flex: 1;
+        max-height: none;
+        overflow-y: auto;
+        padding-right: 4px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .settings-tabs {
+        margin-bottom: 12px;
+      }
+
+      .tab-btn {
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+
+      #contentFrame {
+        width: auto;
+        min-width: 0;
+        border-radius: 22px;
+      }
+
+      .container.pro-layout #contentFrame {
+        width: calc(100% - 34vw - 10px);
+      }
+
+      .right-sidebar {
+        width: 22vw !important;
+        min-width: 130px;
+        max-width: 180px;
+      }
+    }
+
+    @media ((max-width: 900px) or (max-height: 500px)) and (pointer: coarse) and (orientation: portrait) {
+      body {
+        overflow: hidden;
+      }
+
+      .container,
+      .notification,
+      .showpop,
+      #walkthrough-overlay {
+        display: none !important;
+      }
+
+      #mobile-landscape-lock {
+        display: flex;
+      }
+    }
   
   </style>
   <link rel="stylesheet" href="./assets/data/scroll.css">
@@ -1137,9 +1386,30 @@
   </div>
 </div>
 
+<div class="install-guide-overlay" id="install-guide-overlay">
+  <div class="install-guide-content">
+    <h3>Install Facet App</h3>
+    <p><strong>Important:</strong> do this in <strong>Google Chrome</strong>. Other browsers usually do not support this install flow.</p>
+    <p>How it works:</p>
+    <p>1. Tap <strong>Start Install</strong>.<br>2. Accept the install prompt.<br>3. Open Facet from your home screen.</p>
+    <div class="install-guide-actions">
+      <button class="auth-btn" id="install-guide-start">Start Install</button>
+      <button class="auth-btn secondary" id="install-guide-close">Close</button>
+    </div>
+  </div>
+</div>
+
 <body>
+  <div id="mobile-landscape-lock">
+    <div class="lock-content">
+      <div class="lock-icon"><i class="fas fa-mobile-alt"></i></div>
+      <h2>Rotate Your Phone</h2>
+      <p>Facet mobile is available in landscape mode only.</p>
+    </div>
+  </div>
+
   <div id="walkthrough-overlay" style="display: none;">
-    <iframe src="./assets/walkthrough.html"
+    <iframe src="./assets/walkthrough.html" id="walkthrough-frame" title="Facet walkthrough" loading="eager"
       style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 9999;"></iframe>
   </div>
 
@@ -1285,6 +1555,19 @@
                       </label>
                     </div>
                   </div>
+                  <div class="settings-card">
+                    <div class="section-title">App Install</div>
+                    <div class="option-item">
+                      <div style="flex: 1;">
+                        <div class="option-label">Install Mobile App</div>
+                        <div class="option-desc">Install Facet as a landscape app on your device</div>
+                      </div>
+                      <button class="auth-btn" id="install-app-btn" style="width: auto; margin-bottom: 0;" disabled>
+                        Start
+                      </button>
+                    </div>
+                    <div id="install-app-status" class="option-desc">Install is not available yet.</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1293,10 +1576,10 @@
       </div>
     </div>
 
-    <iframe src="./assets/home.html" id="contentFrame"></iframe>
+    <iframe src="./assets/home.html" id="contentFrame" title="Facet content" loading="eager"></iframe>
 
     <div class="sidebar right-sidebar">
-      <iframe src="./ad.html"
+      <iframe src="./ad.html" id="adFrame" title="Facet ad panel" loading="lazy"
         style="width: 100%; height: 100%; border: none; border-radius: 25px;"></iframe>
     </div>
   </div>
@@ -1334,6 +1617,12 @@
     const loadProfileBtn = document.getElementById('load-profile-btn');
     const profileData = document.getElementById('profile-data');
     const upgradeProBtn = document.getElementById('upgrade-pro-btn');
+    const installAppBtn = document.getElementById('install-app-btn');
+    const installAppStatus = document.getElementById('install-app-status');
+    const installGuideOverlay = document.getElementById('install-guide-overlay');
+    const installGuideStart = document.getElementById('install-guide-start');
+    const installGuideClose = document.getElementById('install-guide-close');
+    let deferredInstallPrompt = null;
 
     function filenameForUser() {
       return 'Facet-userdata.json';
@@ -2317,10 +2606,10 @@
         const upgradeFrame = document.createElement('iframe');
         upgradeFrame.id = 'upgrade-frame';
         upgradeFrame.src = './assets/upgrade-pro.html';
+        upgradeFrame.title = 'Upgrade to Facet Pro';
         upgradeFrame.style.cssText = `
           position: fixed;
-          top: 0;
-          left: 0;
+          inset: 0;
           width: 100vw;
           height: 100vh;
           border: none;
@@ -2371,10 +2660,10 @@
       const upgradeFrame = document.createElement('iframe');
       upgradeFrame.id = 'upgrade-frame';
       upgradeFrame.src = './assets/upgrade-pro.html';
+      upgradeFrame.title = 'Upgrade to Facet Pro';
       upgradeFrame.style.cssText = `
         position: fixed;
-        top: 0;
-        left: 0;
+        inset: 0;
         width: 100vw;
         height: 100vh;
         border: none;
@@ -2752,6 +3041,84 @@
       }, 3000);
     }
 
+    function updateInstallUi(available, statusText) {
+      if (!installAppBtn || !installAppStatus) return;
+      installAppBtn.disabled = !available;
+      installAppStatus.textContent = statusText;
+    }
+
+    async function handleInstallClick() {
+      if (!deferredInstallPrompt) {
+        updateInstallUi(false, 'Use browser menu and tap "Add to Home Screen".');
+        showNotification('Install prompt unavailable. Use Add to Home Screen.');
+        return;
+      }
+
+      deferredInstallPrompt.prompt();
+      const choiceResult = await deferredInstallPrompt.userChoice;
+
+      if (choiceResult.outcome === 'accepted') {
+        updateInstallUi(false, 'Facet installation started.');
+      } else {
+        updateInstallUi(true, 'Install canceled. Tap Start to try again.');
+      }
+
+      deferredInstallPrompt = null;
+    }
+
+    if (installAppBtn) {
+      installAppBtn.addEventListener('click', () => {
+        if (installGuideOverlay) {
+          installGuideOverlay.style.display = 'flex';
+        }
+      });
+    }
+
+    if (installGuideClose) {
+      installGuideClose.addEventListener('click', () => {
+        if (installGuideOverlay) {
+          installGuideOverlay.style.display = 'none';
+        }
+      });
+    }
+
+    if (installGuideOverlay) {
+      installGuideOverlay.addEventListener('click', (e) => {
+        if (e.target === installGuideOverlay) {
+          installGuideOverlay.style.display = 'none';
+        }
+      });
+    }
+
+    if (installGuideStart) {
+      installGuideStart.addEventListener('click', async () => {
+        await handleInstallClick();
+        if (installGuideOverlay) {
+          installGuideOverlay.style.display = 'none';
+        }
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      updateInstallUi(true, 'Ready to install Facet.');
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      updateInstallUi(false, 'Facet is installed.');
+      showNotification('Facet installed successfully');
+    });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch((error) => {
+          console.log('Service worker registration failed:', error);
+        });
+      });
+    }
+
     function showGameUpgradeModal() {
       // Create modal overlay
       const modal = document.createElement('div');
@@ -3067,10 +3434,10 @@
           const upgradeFrame = document.createElement('iframe');
           upgradeFrame.id = 'upgrade-frame';
           upgradeFrame.src = './assets/upgrade-pro.html';
+          upgradeFrame.title = 'Upgrade to Facet Pro';
           upgradeFrame.style.cssText = `
             position: fixed;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100vw;
             height: 100vh;
             border: none;

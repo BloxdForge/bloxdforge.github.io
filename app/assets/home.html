@@ -693,10 +693,170 @@
       margin-right: 8px;
       font-size: 0.9rem;
     }
+
+    #mobile-landscape-lock {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10002;
+      background: radial-gradient(circle at center, #1f1b1b 0%, #141313 70%);
+      color: #f1f1f1;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+    }
+
+    #mobile-landscape-lock .lock-content {
+      max-width: 320px;
+    }
+
+    #mobile-landscape-lock .lock-icon {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+      color: #ff6b39;
+    }
+
+    #mobile-landscape-lock h2 {
+      margin: 0 0 8px 0;
+      font-size: 1.2rem;
+      color: #ffffff;
+    }
+
+    #mobile-landscape-lock p {
+      margin: 0;
+      color: #bdbdbd;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 900px) and (pointer: coarse) and (orientation: landscape) {
+      body {
+        padding: 8px;
+      }
+
+      .home-container {
+        gap: 10px;
+      }
+
+      .header {
+        display: none;
+      }
+
+      .home-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .wide-button,
+      .stats {
+        grid-column: span 2;
+      }
+
+      .wide-button {
+        height: 56px;
+        font-size: 0.9rem;
+        border-radius: 14px;
+        padding: 10px;
+      }
+
+      .wide-button i {
+        display: none;
+      }
+
+      .big-btn {
+        height: 170px;
+        padding: 10px;
+        border-radius: 14px;
+      }
+
+      .btn-title {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+        padding: 6px;
+      }
+
+      .btn-image {
+        height: 96px;
+      }
+
+      .btn-content {
+        margin-top: 8px;
+        font-size: 0.72rem;
+        line-height: 1.3;
+      }
+
+      .modal-content {
+        width: 96%;
+        padding: 14px;
+        border-radius: 16px;
+        max-height: 92vh;
+        overflow: auto;
+      }
+
+      .modal-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .modal-item {
+        padding: 10px 8px;
+        border-radius: 12px;
+      }
+
+      .modal-icon {
+        display: none;
+      }
+
+      .modal-title {
+        font-size: 0.82rem;
+        margin-bottom: 4px;
+      }
+
+      .modal-desc {
+        font-size: 0.68rem;
+        line-height: 1.2;
+      }
+
+      .bottomright-btn {
+        bottom: 12px;
+        right: 12px;
+        font-size: 1.1rem;
+        padding: 8px;
+      }
+    }
+
+    @media (max-width: 900px) and (pointer: coarse) and (orientation: portrait) {
+      #main-content,
+      #popupModal,
+      #worldsModal,
+      #iframeModal,
+      #modal,
+      #popmenu,
+      #fps-ping-display,
+      #recording-window,
+      .bottomright-btn,
+      .tooltip,
+      .darkmode-overlay {
+        display: none !important;
+      }
+
+      #mobile-landscape-lock {
+        display: flex;
+      }
+    }
   </style>
 </head>
 
 <body>
+  <div id="mobile-landscape-lock">
+    <div class="lock-content">
+      <div class="lock-icon"><i class="fas fa-mobile-alt"></i></div>
+      <h2>Rotate Your Phone</h2>
+      <p>Facet mobile is available in landscape mode only.</p>
+    </div>
+  </div>
+
   <button class="bottomright-btn" id="menupopBtn"><i class="fas fa-bars"></i></button>
 
   <div class="tooltip" id="menuTooltip">
