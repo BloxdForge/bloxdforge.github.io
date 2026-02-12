@@ -999,6 +999,115 @@
       font-weight: 600;
       margin-bottom: 12px;
     }
+
+    .option-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #444343;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .option-label {
+      font-weight: 600;
+      color: #e0e0e0;
+      font-size: 14px;
+    }
+
+    .option-desc {
+      font-size: 12px;
+      color: #a0a0a0;
+      margin-top: 3px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #444343;
+      transition: 0.3s;
+      border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: #ff6b39;
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(26px);
+    }
+
+    .settings-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid #3a3939;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .section-title {
+      font-weight: 700;
+      color: #ff6b39;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+
+    .profile-section-title {
+      font-weight: 700;
+      color: #ff6b39;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .auth-btn {
+      width: 100%;
+    }
+
+    .auth-btn:not(:last-child) {
+      margin-bottom: 8px;
+    }
+  
   </style>
   <link rel="stylesheet" href="./assets/data/scroll.css">
 </head>
@@ -1091,17 +1200,22 @@
                 <button class="tab-btn active" data-tab="account">Account</button>
                 <button class="tab-btn" data-tab="upgrade">Upgrade</button>
                 <button class="tab-btn" data-tab="credits">Credits</button>
+                <button class="tab-btn" data-tab="options">Options</button>
               </div>
               <div class="tab-content">
                 <div class="tab-pane active" id="account-tab">
-                  <div class="auth-status" id="auth-status">signed out</div>
+                  <div class="settings-card">
+                    <div class="auth-status" id="auth-status">signed out</div>
+                  </div>
 
-                  <button class="auth-btn" id="sign-in-btn">Sign In</button>
-                  <button class="auth-btn secondary" id="sign-out-btn" style="display: none;">Sign Out</button>
-                  <button class="auth-btn secondary" id="show-walkthrough-btn" style="margin-top: 10px;">Show
-                    Walkthrough</button>
+                  <div class="settings-card">
+                    <button class="auth-btn" id="sign-in-btn">Sign In</button>
+                    <button class="auth-btn secondary" id="sign-out-btn" style="display: none;">Sign Out</button>
+                    <button class="auth-btn secondary" id="show-walkthrough-btn">Show Walkthrough</button>
+                  </div>
 
-                  <div class="profile-form" id="profile-form" style="display: none;">
+                  <div class="settings-card" id="profile-form" style="display: none;">
+                    <div class="profile-section-title">Profile Settings</div>
                     <div class="form-group">
                       <label>Description</label>
                       <input class="form-input" id="profile-description" type="text" placeholder="Enter description"
@@ -1110,11 +1224,9 @@
 
                     <div class="form-group">
                       <label>Account Type</label>
-                      <div style="display: flex; align-items: center; gap: 8px;">
-                        <select class="form-select" id="profile-section" disabled>
-                          <option value="Free">Free</option>
-                        </select>
-                      </div>
+                      <select class="form-select" id="profile-section" disabled>
+                        <option value="Free">Free</option>
+                      </select>
                     </div>
 
                     <div class="profile-actions">
@@ -1126,23 +1238,25 @@
                   </div>
                 </div>
                 <div class="tab-pane" id="upgrade-tab">
-                  <div class="upgrade-section">
-                    <h4>Upgrade Options</h4>
+                  <div class="settings-card">
+                    <div class="section-title">Upgrade Options</div>
                     <button class="auth-btn" id="open-upgrade-btn">Upgrade with Ads</button>
                     <button class="auth-btn" id="open-game-upgrade-btn">Play Game to Upgrade (4 Days)</button>
+                  </div>
 
-                    <h4>Redeem Code</h4>
+                  <div class="settings-card">
+                    <div class="section-title">Redeem Code</div>
                     <div style="display: flex; gap: 8px; margin-bottom: 10px;">
                       <input type="text" class="form-input" id="code-input" placeholder="Enter code" />
                       <button class="auth-btn" id="redeem-code-btn"
                         style="padding: 8px 12px; font-size: 12px;">Redeem</button>
                     </div>
-                    <div id="code-message" style="font-size: 12px; min-height: 18px;"></div>
+                    <div id="code-message" style="font-size: 12px; min-height: 18px; color: #a0a0a0;"></div>
                   </div>
                 </div>
                 <div class="tab-pane" id="credits-tab">
-                  <div class="upgrade-section credits-section">
-                    <h4>Project Credits</h4>
+                  <div class="settings-card">
+                    <div class="section-title">Project Credits</div>
                     <div class="credits-info">
                       <div class="credit-item">
                         <div class="credit-name">A_I_X</div>
@@ -1154,6 +1268,21 @@
                         <div class="credit-role">Developer</div>
                         <div class="credit-desc">Helped with the backend things and more</div>
                       </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane" id="options-tab">
+                  <div class="settings-card">
+                    <div class="section-title">Performance</div>
+                    <div class="option-item">
+                      <div style="flex: 1;">
+                        <div class="option-label">Disable Blur Effects</div>
+                        <div class="option-desc">Turn off blur effects for better performance</div>
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="blur-toggle" />
+                        <span class="toggle-slider"></span>
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -2464,6 +2593,20 @@
       });
     });
 
+    // Blur toggle functionality
+    const blurToggle = document.getElementById('blur-toggle');
+    if (blurToggle) {
+      const isBlurDisabled = localStorage.getItem('disable-blur') === 'true';
+      blurToggle.checked = isBlurDisabled;
+
+      blurToggle.addEventListener('change', () => {
+        localStorage.setItem('disable-blur', blurToggle.checked);
+        if (blurToggle.checked) {
+          iframe.classList.remove('blurred');
+        }
+      });
+    }
+
     const cards = document.querySelectorAll('.card');
     const homeBtn = document.querySelector('.long-btn');
     const fullscreenBtn = document.getElementById('fullscreenBtn');
@@ -2486,9 +2629,12 @@
 
         const url = card.getAttribute('data-url');
 
-        console.log('Adding blur effect to iframe');
-        iframe.classList.add('blurred');
-        console.log('Iframe classes after adding blur:', iframe.className);
+        const isBlurDisabled = localStorage.getItem('disable-blur') === 'true';
+        if (!isBlurDisabled) {
+          console.log('Adding blur effect to iframe');
+          iframe.classList.add('blurred');
+          console.log('Iframe classes after adding blur:', iframe.className);
+        }
 
         setTimeout(() => {
           console.log('Removing blur effect from iframe');
@@ -2533,9 +2679,12 @@
 
       const url = homeBtn.getAttribute('data-url');
 
-      console.log('Adding blur effect to iframe (home button)');
-      iframe.classList.add('blurred');
-      console.log('Iframe classes after adding blur:', iframe.className);
+      const isBlurDisabled = localStorage.getItem('disable-blur') === 'true';
+      if (!isBlurDisabled) {
+        console.log('Adding blur effect to iframe (home button)');
+        iframe.classList.add('blurred');
+        console.log('Iframe classes after adding blur:', iframe.className);
+      }
 
       setTimeout(() => {
         console.log('Removing blur effect from iframe (home button)');

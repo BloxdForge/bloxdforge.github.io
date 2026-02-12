@@ -742,6 +742,11 @@
           <h3 class="modal-title">Clipboard</h3>
           <p class="modal-desc">Manage clipboard content</p>
         </div>
+        <div class="modal-item" id="close-session-btn">
+          <div class="modal-icon"><i class="fas fa-sign-out-alt"></i></div>
+          <h3 class="modal-title">Close session</h3>
+          <p class="modal-desc">Exit the game</p>
+        </div>
         <div class="modal-item" id="close-btn">
           <div class="modal-icon"><i class="fas fa-times"></i></div>
           <h3 class="modal-title">Close</h3>
@@ -1206,7 +1211,7 @@
     });
 
     document.querySelectorAll('.modal-item').forEach(item => {
-      if (item.id && item.id !== 'close-btn' && item.id !== 'record-btn' && item.id !== 'ai-assistant-btn' && item.id !== 'clipboard-btn') {
+      if (item.id && item.id !== 'close-btn' && item.id !== 'record-btn' && item.id !== 'ai-assistant-btn' && item.id !== 'clipboard-btn' && item.id !== 'close-session-btn') {
         item.style.cursor = 'pointer';
         item.addEventListener('click', (e) => {
           if (item.id === 'metrics-btn') {
@@ -1264,6 +1269,21 @@
         e.stopPropagation();
 
         createClipboardWindow();
+        modal.style.display = 'none';
+      });
+    }
+
+    const closeSessionBtn = document.getElementById('close-session-btn');
+    if (closeSessionBtn) {
+      closeSessionBtn.style.cursor = 'pointer';
+      closeSessionBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const iframe = document.querySelector('.fullscreen-frame');
+        iframe.style.display = 'none';
+        iframe.src = '';
+        document.getElementById('main-content').style.display = 'flex';
         modal.style.display = 'none';
       });
     }
