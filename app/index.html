@@ -75,7 +75,7 @@
       padding: 0;
       overflow: hidden;
       width: 20vh !important;
-      display: none;
+      display: none !important;
     }
 
     .right-sidebar iframe {
@@ -83,6 +83,7 @@
       height: 100%;
       border: none;
       border-radius: 25px;
+      display: none !important;
     }
 
     .sidebar::before {
@@ -1337,6 +1338,7 @@
         width: 22vw !important;
         min-width: 130px;
         max-width: 180px;
+        display: none !important;
       }
     }
 
@@ -3020,6 +3022,36 @@
     fullscreenBtn.addEventListener('click', () => {
       if (CURRENT_USER?.username && checkIfUserIsBanned(CURRENT_USER.username)) {
         showBanPopup();
+        return;
+      }
+
+      const isMobileDevice = window.matchMedia('(pointer: coarse)').matches &&
+        (window.matchMedia('(max-width: 900px)').matches || window.matchMedia('(max-height: 500px)').matches);
+
+      if (isMobileDevice) {
+        const rootEl = document.documentElement;
+        const activeFullscreenEl = document.fullscreenElement;
+
+        // Mobile cycle:
+        // 1st tap -> fullscreen the site
+        // 2nd tap -> fullscreen the iframe without leaving fullscreen mode
+        if (!activeFullscreenEl) {
+          rootEl.requestFullscreen().catch(err => {
+            showNotification('Fullscreen failed: ' + err.message);
+          });
+          return;
+        }
+
+        if (activeFullscreenEl !== iframe) {
+          iframe.requestFullscreen().catch(err => {
+            showNotification('Fullscreen failed: ' + err.message);
+          });
+          return;
+        }
+
+        rootEl.requestFullscreen().catch(err => {
+          showNotification('Fullscreen failed: ' + err.message);
+        });
         return;
       }
 
