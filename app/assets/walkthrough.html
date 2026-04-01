@@ -391,13 +391,58 @@
         <div class="walkthrough-card" id="card4">
             <div class="card-content">
                 <div class="card-icon">
-                    <i class="fas fa-rocket"></i>
+                    <i class="fas fa-puzzle-piece"></i>
                 </div>
                 <div class="card-text">
-                    <h2 class="card-header">Get Started</h2>
-                    <p class="card-body">You're all set! Click Finish to begin using Facet.</p>
+                    <h2 class="card-header">Workshop & Wiki</h2>
+                    <p class="card-body">The <strong>Workshop</strong> has community maps, texture packs, and mods. The <strong>Wiki</strong> has guides for commands, mobs, and crafting. Use the sidebar to switch between them.</p>
                     <div class="card-footer">
-                        <button class="btn btn-next" id="finalFinishBtn">Finish</button>
+                        <button class="btn btn-next" id="next4">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="walkthrough-card" id="card5">
+            <div class="card-content">
+                <div class="card-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="card-text">
+                    <h2 class="card-header">PartyFace</h2>
+                    <p class="card-body">Want to play with friends? Use <strong>PartyFace</strong> to create a party with a chat - no more struggling with the in-game party system that has no chat! Share an invite code and you can chat, share links, and browse together in real-time.</p>
+                    <div class="card-footer">
+                        <button class="btn btn-next" id="next5">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="walkthrough-card" id="card6">
+            <div class="card-content">
+                <div class="card-icon">
+                    <i class="fas fa-puzzle-piece"></i>
+                </div>
+                <div class="card-text">
+                    <h2 class="card-header">Workshop & Wiki</h2>
+                    <p class="card-body">The <strong>Workshop</strong> has community maps, texture packs, and mods. The <strong>Wiki</strong> has guides for commands, mobs, and crafting. Use the sidebar to switch between them.</p>
+                    <div class="card-footer">
+                        <button class="btn btn-next" id="next6">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="walkthrough-card" id="card7">
+            <div class="card-content">
+                <div class="card-icon">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+                <div class="card-text">
+                    <h2 class="card-header">Menu & Settings</h2>
+                    <p class="card-body">Click the <i class="fas fa-bars"></i> menu button (bottom right) to access metrics, filters, screen recording, clipboard, and more. Check <strong>Options</strong> in your profile to install as an app!</p>
+                    <div class="card-footer">
+                        <button class="btn btn-next" id="next7">Finish</button>
                     </div>
                 </div>
             </div>
@@ -408,6 +453,9 @@
             <div class="progress-dot" data-card="2"></div>
             <div class="progress-dot" data-card="3"></div>
             <div class="progress-dot" data-card="4"></div>
+            <div class="progress-dot" data-card="5"></div>
+            <div class="progress-dot" data-card="6"></div>
+            <div class="progress-dot" data-card="7"></div>
         </div>
     </div>
 
@@ -432,6 +480,37 @@
             document.getElementById('card4').classList.add('active');
 
             updateProgressIndicators(4);
+        });
+
+        document.getElementById('next4').addEventListener('click', function () {
+            document.getElementById('card4').classList.remove('active');
+            document.getElementById('card5').classList.add('active');
+
+            updateProgressIndicators(5);
+        });
+
+        document.getElementById('next5').addEventListener('click', function () {
+            document.getElementById('card5').classList.remove('active');
+            document.getElementById('card6').classList.add('active');
+
+            updateProgressIndicators(6);
+        });
+
+        document.getElementById('next6').addEventListener('click', function () {
+            document.getElementById('card6').classList.remove('active');
+            document.getElementById('card7').classList.add('active');
+
+            updateProgressIndicators(7);
+        });
+
+        document.getElementById('next7').addEventListener('click', function () {
+            if (window.parent) {
+                window.parent.postMessage({
+                    action: 'walkthroughComplete'
+                }, '*');
+            }
+
+            document.getElementById('walkthroughContainer').style.display = 'none';
         });
 
         document.getElementById('finalFinishBtn').addEventListener('click', function () {

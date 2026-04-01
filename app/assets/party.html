@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PartyFace</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://js.puter.com/v2/"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #1b1a1a;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #e0e0e0;
+      overflow: hidden;
+    }
+
+    .beta-notice {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(90deg, #ff6b39, #ff8c5a);
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      z-index: 10000;
+      animation: slideDown 0.3s ease;
+    }
+
+    .beta-notice button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0 5px;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-100%); }
+      to { transform: translateY(0); }
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+      padding: 20px;
+      gap: 20px;
+      background: linear-gradient(135deg, #1b1a1a 0%, #171616 100%);
+    }
+
+    .chat-sidebar {
+      width: 320px;
+      min-width: 280px;
+      background: linear-gradient(180deg, #262525 0%, #212020 100%);
+      border: 1px solid #3a3939;
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    .party-header {
+      padding: 20px;
+      border-bottom: 1px solid #3a3939;
+      text-align: center;
+    }
+
+    .party-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, #ff6b39, #ff8c5a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 5px;
+    }
+
+    .party-status {
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    .party-status.connected {
+      color: #4ade80;
+    }
+
+    .leave-btn {
+      background: transparent;
+      border: 1px solid #3a3939;
+      color: #888;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.8rem;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+
+    .leave-btn:hover {
+      border-color: #ef4444;
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .join-create-section {
+      padding: 20px;
+      border-bottom: 1px solid #3a3939;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-bottom: 5px;
+    }
+
+    .invite-input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid #3a3939;
+      background: #1f1e1e;
+      color: #e8e8e8;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .invite-input:focus {
+      border-color: #ff6b39;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .party-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+    }
+
+    .party-btn.primary {
+      background: linear-gradient(45deg, #ff6b39, #ff8c5a);
+      color: white;
+    }
+
+    .party-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 57, 0.4);
+    }
+
+    .party-btn.secondary {
+      background: #2f2e2e;
+      color: #e8e8e8;
+      border: 1px solid #3a3939;
+    }
+
+    .party-btn.secondary:hover {
+      background: #353535;
+    }
+
+    .invite-code-display {
+      background: #1f1e1e;
+      border: 1px solid #3a3939;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      display: none;
+    }
+
+    .invite-code-display.show {
+      display: block !important;
+    }
+
+    .invite-code-display .code {
+      font-family: monospace;
+      font-size: 1.2rem;
+      color: #ff8c5a;
+      letter-spacing: 2px;
+    }
+
+    .invite-code-display .copy-btn {
+      margin-top: 8px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      background: #2f2e2e;
+      border: 1px solid #3a3939;
+      border-radius: 6px;
+      color: #aaa;
+      cursor: pointer;
+    }
+
+    .members-section {
+      padding: 12px 16px;
+      border-bottom: 1px solid #3a3939;
+    }
+
+    .members-title {
+      font-size: 0.8rem;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .members-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .member-badge {
+      background: #2f2e2e;
+      border: 1px solid #3a3939;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      color: #e8e8e8;
+    }
+
+    .member-badge.host {
+      background: linear-gradient(45deg, #ff6b3933, #ff8c5a33);
+      border-color: #ff6b3955;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-message {
+      background: #2f2e2e;
+      border: 1px solid #3a3939;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+    }
+
+    .chat-message.system {
+      background: transparent;
+      border: 1px dashed #3a3939;
+      color: #888;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    .chat-message .sender {
+      font-weight: 600;
+      color: #ff8c5a;
+      margin-right: 8px;
+    }
+
+    .chat-message .time {
+      font-size: 0.7rem;
+      color: #666;
+      float: right;
+    }
+
+    .chat-message .content {
+      margin-top: 4px;
+      word-break: break-word;
+    }
+
+    .chat-message .content .chat-link {
+      color: #ff8c5a;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .chat-message .content .chat-link:hover {
+      text-decoration: underline;
+    }
+
+    .chat-message .link-preview {
+      display: inline-block;
+      background: #1f1e1e;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: #ff8c5a;
+      cursor: pointer;
+    }
+
+    .chat-message .link-preview:hover {
+      background: #252525;
+    }
+
+    .chat-input-section {
+      padding: 16px;
+      border-top: 1px solid #3a3939;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input.flying {
+      animation: flyOut 0.4s ease-out forwards;
+    }
+
+    @keyframes flyOut {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: translateY(-20px) scale(0.8);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-40px) scale(0);
+        opacity: 0;
+      }
+    }
+
+    .chat-send-btn.sending {
+      animation: pulse 0.3s ease-out;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid #3a3939;
+      background: #1f1e1e;
+      color: #e8e8e8;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .chat-input:focus {
+      border-color: #ff6b39;
+    }
+
+    .chat-send-btn {
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(45deg, #ff6b39, #ff8c5a);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .chat-send-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 57, 0.4);
+    }
+
+    .chat-send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .browse-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .browse-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      background: linear-gradient(90deg, #262525, #242323);
+      border: 1px solid #3a3939;
+      border-radius: 16px;
+    }
+
+    .current-url {
+      font-size: 0.85rem;
+      color: #aaa;
+      max-width: 70%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .browse-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .browse-btn {
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 1px solid #3a3939;
+      background: #2f2e2e;
+      color: #e8e8e8;
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .browse-btn:hover {
+      background: #353535;
+      border-color: #4a4949;
+    }
+
+    .browse-btn.fullscreen {
+      background: linear-gradient(45deg, #ff6b39, #ff8c5a);
+      border: none;
+      color: white;
+    }
+
+    .browse-btn.fullscreen:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 57, 0.4);
+    }
+
+    .browse-frame-container {
+      flex: 1;
+      background: #161515;
+      border: 1px solid #3a3939;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .browse-frame-container.fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+      z-index: 10000;
+    }
+
+    .browse-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .browse-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #666;
+      gap: 20px;
+    }
+
+    .browse-placeholder i {
+      font-size: 4rem;
+      opacity: 0.3;
+    }
+
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 10001;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: linear-gradient(145deg, #262525, #212020);
+      border: 1px solid #ff6b39;
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideIn 0.3s ease;
+      max-width: 350px;
+    }
+
+    .toast-icon {
+      font-size: 1.2rem;
+      color: #ff6b39;
+    }
+
+    .toast-content {
+      flex: 1;
+    }
+
+    .toast-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #e8e8e8;
+    }
+
+    .toast-message {
+      font-size: 0.8rem;
+      color: #aaa;
+      margin-top: 2px;
+    }
+
+    .toast-link {
+      font-size: 0.75rem;
+      color: #ff8c5a;
+      margin-top: 4px;
+      cursor: pointer;
+    }
+
+    .toast-link:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .no-party {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #666;
+      gap: 20px;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .no-party i {
+      font-size: 4rem;
+      opacity: 0.3;
+      color: #ff6b39;
+    }
+
+    .no-party h2 {
+      margin: 0;
+      color: #e8e8e8;
+      font-size: 1.5rem;
+    }
+
+    .no-party p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 800px) {
+      .container {
+        flex-direction: column;
+        padding: 10px;
+      }
+
+      .chat-sidebar {
+        width: 100%;
+        height: 40vh;
+        min-height: 300px;
+      }
+
+      .browse-area {
+        height: 60vh;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="beta-notice" id="betaNotice">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>PartyFace is in beta - things may not work perfectly</span>
+    <button id="dismissBetaNotice">&times;</button>
+  </div>
+
+  <div class="container">
+    <div class="chat-sidebar">
+      <div class="party-header">
+        <div class="party-title"><i class="fas fa-users"></i> PartyFace</div>
+        <div class="party-status" id="partyStatus">Not connected</div>
+        <button class="leave-btn" id="leaveBtn" style="display: none; margin-top: 10px;">
+          <i class="fas fa-sign-out-alt"></i> Leave Party
+        </button>
+        <div class="invite-code-display" id="inviteCodeDisplay" style="display: none; margin-top: 10px;">
+          <div class="section-title">Share this code</div>
+          <div class="code" id="myInviteCode">------</div>
+          <button class="copy-btn" id="copyCodeBtn"><i class="fas fa-copy"></i> Copy</button>
+        </div>
+      </div>
+
+      <div class="join-create-section" id="joinCreateSection">
+        <div class="section-title">Join a Party</div>
+        <input type="text" class="invite-input" id="inviteInput" placeholder="Enter invite code">
+        <div class="btn-row">
+          <button class="party-btn primary" id="joinBtn">Join</button>
+          <button class="party-btn secondary" id="createBtn">Create Party</button>
+        </div>
+      </div>
+
+      <div class="members-section" id="membersSection" style="display: none;">
+        <div class="members-title">Party Members</div>
+        <div class="members-list" id="membersList"></div>
+      </div>
+
+      <div class="chat-messages" id="chatMessages"></div>
+
+      <div class="chat-input-section">
+        <div class="chat-input-row">
+          <input type="text" class="chat-input" id="chatInput" placeholder="Type a message or paste a link..." disabled>
+          <button class="chat-send-btn" id="sendChatBtn" disabled><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="browse-area">
+      <div class="browse-header">
+        <div class="current-url" id="currentUrl">No page loaded</div>
+        <div class="browse-actions">
+          <button class="browse-btn" id="backBtn" title="Back"><i class="fas fa-arrow-left"></i></button>
+          <button class="browse-btn" id="forwardBtn" title="Forward"><i class="fas fa-arrow-right"></i></button>
+          <button class="browse-btn" id="refreshBtn" title="Refresh"><i class="fas fa-redo"></i></button>
+          <button class="browse-btn fullscreen" id="fullscreenBtn"><i class="fas fa-expand"></i></button>
+        </div>
+      </div>
+      <div class="browse-frame-container" id="browseContainer">
+        <div class="browse-placeholder" id="browsePlaceholder">
+          <i class="fas fa-globe"></i>
+          <div>Join or create a party to browse together</div>
+        </div>
+        <iframe class="browse-iframe" id="browseIframe" style="display: none;"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    const partyStatus = document.getElementById('partyStatus');
+    const inviteInput = document.getElementById('inviteInput');
+    const joinBtn = document.getElementById('joinBtn');
+    const createBtn = document.getElementById('createBtn');
+    const inviteCodeDisplay = document.getElementById('inviteCodeDisplay');
+    const myInviteCode = document.getElementById('myInviteCode');
+    const copyCodeBtn = document.getElementById('copyCodeBtn');
+    const leaveBtn = document.getElementById('leaveBtn');
+    const membersSection = document.getElementById('membersSection');
+    const membersList = document.getElementById('membersList');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendChatBtn = document.getElementById('sendChatBtn');
+    const currentUrl = document.getElementById('currentUrl');
+    const browseIframe = document.getElementById('browseIframe');
+    const browsePlaceholder = document.getElementById('browsePlaceholder');
+    const browseContainer = document.getElementById('browseContainer');
+    const backBtn = document.getElementById('backBtn');
+    const forwardBtn = document.getElementById('forwardBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const toastContainer = document.getElementById('toastContainer');
+
+    let peer = null;
+    let connections = [];
+    let isHost = false;
+    let myUsername = 'Guest-' + Math.random().toString(36).substr(2, 4);
+    let currentIframeUrl = '';
+    let puterReady = false;
+    let puter = null;
+
+    function init() {
+      // Try direct window.puter first
+      if (window.puter && window.puter.peer) {
+        puter = window.puter;
+        puterReady = true;
+        
+        // Get Puter username
+        if (window.puter.auth && window.puter.auth.getUser) {
+          window.puter.auth.getUser().then(user => {
+            if (user && user.username) {
+              myUsername = user.username;
+            }
+          }).catch(() => {});
+        }
+        
+        onPuterReady();
+        return;
+      }
+      
+      // Try parent window's puter (if in iframe)
+      if (window.parent !== window && window.parent.puter && window.parent.puter.peer) {
+        puter = window.parent.puter;
+        puterReady = true;
+        onPuterReady();
+        return;
+      }
+      
+      // Try top window's puter
+      try {
+        if (window.top && window.top !== window && window.top.puter && window.top.puter.peer) {
+          puter = window.top.puter;
+          puterReady = true;
+          onPuterReady();
+          return;
+        }
+      } catch(e) {}
+      
+      // Wait and retry
+      addChatMessage('System', 'Waiting for Puter to load...', true);
+      setTimeout(init, 500);
+    }
+
+    function onPuterReady() {
+      loadUrl('https://bloxd.io');
+      addChatMessage('System', 'Ready to party! Create or join a party.');
+    }
+
+    function addChatMessage(sender, content, isSystem = false, linkUrl = null) {
+      const msg = document.createElement('div');
+      msg.className = 'chat-message' + (isSystem ? ' system' : '');
+
+      const now = new Date();
+      const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      let html = '';
+      if (isSystem) {
+        html = content;
+      } else {
+        // Detect URLs in content and make them clickable
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        let contentWithLinks = content.replace(urlRegex, '<a class="chat-link" href="$1">$1</a>');
+        
+        html = `<span class="sender">${sender}</span><span class="time">${time}</span><div class="content">${contentWithLinks}</div>`;
+        if (linkUrl) {
+          html += `<div class="link-preview" data-url="${linkUrl}"><i class="fas fa-link"></i> ${linkUrl}</div>`;
+        }
+      }
+
+      msg.innerHTML = html;
+      chatMessages.appendChild(msg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // Add click handlers for links
+      msg.querySelectorAll('.chat-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          loadUrl(link.href);
+        });
+      });
+
+      if (linkUrl) {
+        msg.querySelector('.link-preview').addEventListener('click', () => {
+          loadUrl(linkUrl);
+        });
+      }
+    }
+
+    function broadcast(message) {
+      connections.forEach(conn => {
+        if (conn.readyState === 'open') {
+          conn.send(message);
+        }
+      });
+    }
+
+    function showToast(title, message, linkUrl = null) {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `
+        <div class="toast-icon"><i class="fas fa-bell"></i></div>
+        <div class="toast-content">
+          <div class="toast-title">${title}</div>
+          <div class="toast-message">${message}</div>
+          ${linkUrl ? `<div class="toast-link" data-url="${linkUrl}">${linkUrl}</div>` : ''}
+        </div>
+      `;
+
+      toastContainer.appendChild(toast);
+
+      if (linkUrl) {
+        toast.querySelector('.toast-link').addEventListener('click', () => {
+          loadUrl(linkUrl);
+        });
+      }
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 300);
+      }, 5000);
+    }
+
+    function loadUrl(url) {
+      browsePlaceholder.style.display = 'none';
+      browseIframe.style.display = 'block';
+      browseIframe.src = url;
+      currentIframeUrl = url;
+      currentUrl.textContent = url;
+    }
+
+    init();
+
+    // Beta notice handling
+    const betaNotice = document.getElementById('betaNotice');
+    const dismissBetaBtn = document.getElementById('dismissBetaNotice');
+    
+    if (localStorage.getItem('partyfaceBetaDismissed')) {
+      betaNotice.style.display = 'none';
+    }
+    
+    dismissBetaBtn.addEventListener('click', () => {
+      betaNotice.style.display = 'none';
+      localStorage.setItem('partyfaceBetaDismissed', 'true');
+    });
+
+    joinBtn.addEventListener('click', async () => {
+      if (!puterReady) {
+        addChatMessage('System', 'Puter is still loading, please wait...', true);
+        return;
+      }
+      const inviteCode = inviteInput.value.trim();
+      if (!inviteCode) return;
+
+      joinBtn.disabled = true;
+      joinBtn.textContent = 'Connecting...';
+
+      try {
+        const conn = await puter.peer.connect(inviteCode);
+        connections.push(conn);
+
+        conn.addEventListener('open', () => {
+          partyStatus.textContent = 'Connected';
+          partyStatus.classList.add('connected');
+          partyStatus.classList.remove('disconnected');
+          joinCreateSection.style.display = 'none';
+          membersSection.style.display = 'block';
+          leaveBtn.style.display = 'block';
+          chatInput.disabled = false;
+          sendChatBtn.disabled = false;
+
+          conn.send(JSON.stringify({ type: 'join', username: myUsername }));
+          addChatMessage('System', 'You joined the party!', true);
+        });
+
+        conn.addEventListener('message', (event) => {
+          handleMessage(event.data, conn);
+        });
+
+        conn.addEventListener('close', () => {
+          partyStatus.textContent = 'Disconnected';
+          partyStatus.classList.remove('connected');
+          addChatMessage('System', 'You left the party.', true);
+        });
+
+      } catch (err) {
+        console.error(err);
+        addChatMessage('System', 'Failed to join: ' + err.message, true);
+      }
+
+      joinBtn.disabled = false;
+      joinBtn.textContent = 'Join';
+    });
+
+    createBtn.addEventListener('click', async () => {
+      if (!puterReady || !puter) {
+        addChatMessage('System', 'Puter is still loading, please wait...', true);
+        return;
+      }
+      createBtn.disabled = true;
+      createBtn.textContent = 'Starting...';
+
+      try {
+        peer = await puter.peer.serve();
+        isHost = true;
+        myInviteCode.textContent = peer.inviteCode;
+        inviteCodeDisplay.style.display = 'block';
+
+        partyStatus.textContent = 'Hosting';
+        partyStatus.classList.add('connected');
+
+        peer.addEventListener('connection', (event) => {
+          connections.push(event.conn);
+          const conn = event.conn;
+
+          conn.addEventListener('open', () => {
+            addChatMessage('System', 'A new user joined!', true);
+          });
+
+          conn.addEventListener('message', (evt) => {
+            handleMessage(evt.data, conn);
+          });
+
+          conn.addEventListener('close', () => {
+            addChatMessage('System', 'A user left.', true);
+          });
+        });
+
+        chatInput.disabled = false;
+        sendChatBtn.disabled = false;
+        joinCreateSection.style.display = 'none';
+        membersSection.style.display = 'block';
+        leaveBtn.style.display = 'block';
+        updateMembers([{ username: myUsername, isHost: true }]);
+
+        addChatMessage('System', 'Party created! Share the invite code with friends.', true);
+
+      } catch (err) {
+        console.error('Create party error:', err);
+        console.error('puter object:', puter);
+        console.error('window.puter:', window.puter);
+        addChatMessage('System', 'Failed to create party: ' + err.message + ' (puter=' + (puter ? 'exists' : 'null') + ')');
+      }
+
+      createBtn.disabled = false;
+      createBtn.textContent = 'Create Party';
+    });
+
+    function handleMessage(event, conn) {
+      let data;
+      try {
+        data = typeof event.data === 'string' ? event.data : JSON.stringify(event.data);
+      } catch(e) {
+        return;
+      }
+      
+      try {
+        const msg = JSON.parse(data);
+
+        if (msg.type === 'join') {
+          const members = getMembers();
+          members.push({ username: msg.username, isHost: false });
+          updateMembers(members);
+
+          if (isHost) {
+            broadcast(JSON.stringify({ type: 'members', list: members }));
+          }
+        }
+
+        if (msg.type === 'members' && !isHost) {
+          updateMembers(msg.list);
+        }
+
+        if (msg.type === 'chat') {
+          addChatMessage(msg.username, msg.content);
+        }
+
+        if (msg.type === 'link') {
+          addChatMessage(msg.username, 'shared a page:', false, msg.url);
+          showToast('Link Shared', `${msg.username} shared a page`, msg.url);
+        }
+
+        if (msg.type === 'navigate') {
+          loadUrl(msg.url);
+          if (!isHost) {
+            broadcast(JSON.stringify({ type: 'navigate', url: msg.url }));
+          }
+        }
+      } catch (e) {
+        // Ignore non-JSON messages
+      }
+    }
+
+    function getMembers() {
+      const badges = membersList.querySelectorAll('.member-badge');
+      const members = [];
+      badges.forEach(b => {
+        members.push({
+          username: b.dataset.username,
+          isHost: b.classList.contains('host')
+        });
+      });
+      if (isHost) {
+        members.unshift({ username: myUsername, isHost: true });
+      }
+      return members;
+    }
+
+    function updateMembers(members) {
+      membersList.innerHTML = '';
+      members.forEach(m => {
+        const badge = document.createElement('div');
+        badge.className = 'member-badge' + (m.isHost ? ' host' : '');
+        badge.dataset.username = m.username;
+        badge.innerHTML = `<i class="fas fa-${m.isHost ? 'crown' : 'user'}"></i> ${m.username}${m.isHost ? ' (Host)' : ''}`;
+        membersList.appendChild(badge);
+      });
+    }
+
+    sendChatBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    function sendMessage() {
+      const content = chatInput.value.trim();
+      if (!content) return;
+
+      // Add animation to input and button
+      chatInput.classList.add('flying');
+      sendChatBtn.classList.add('sending');
+
+      setTimeout(() => {
+        addChatMessage('You', content);
+
+        broadcast(JSON.stringify({
+          type: 'chat',
+          username: myUsername,
+          content: content
+        }));
+
+        chatInput.value = '';
+        chatInput.classList.remove('flying');
+        sendChatBtn.classList.remove('sending');
+      }, 400);
+    }
+
+    copyCodeBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(myInviteCode.textContent).then(() => {
+        copyCodeBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => {
+          copyCodeBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+        }, 2000);
+      });
+    });
+
+    leaveBtn.addEventListener('click', () => {
+      // Close all connections
+      connections.forEach(conn => {
+        if (conn.readyState === 'open') {
+          conn.close();
+        }
+      });
+      connections = [];
+      isHost = false;
+      peer = null;
+      
+      // Reset UI
+      partyStatus.textContent = 'Not connected';
+      partyStatus.classList.remove('connected');
+      joinCreateSection.style.display = 'flex';
+      membersSection.style.display = 'none';
+      inviteCodeDisplay.style.display = 'none';
+      leaveBtn.style.display = 'none';
+      chatInput.disabled = true;
+      sendChatBtn.disabled = true;
+      
+      addChatMessage('System', 'You left the party.', true);
+    });
+
+    browseIframe.addEventListener('load', () => {
+      try {
+        currentIframeUrl = browseIframe.contentWindow.location.href;
+        currentUrl.textContent = currentIframeUrl;
+
+        if (isHost && connections.length > 0) {
+          broadcast(JSON.stringify({ type: 'navigate', url: currentIframeUrl }));
+        }
+      } catch (e) {
+        console.log('Cannot read iframe URL (cross-origin)');
+      }
+    });
+
+    backBtn.addEventListener('click', () => {
+      browseIframe.contentWindow?.history.back();
+    });
+
+    forwardBtn.addEventListener('click', () => {
+      browseIframe.contentWindow?.history.forward();
+    });
+
+    refreshBtn.addEventListener('click', () => {
+      browseIframe.src = browseIframe.src;
+    });
+
+    fullscreenBtn.addEventListener('click', () => {
+      browseContainer.classList.toggle('fullscreen');
+      fullscreenBtn.innerHTML = browseContainer.classList.contains('fullscreen')
+        ? '<i class="fas fa-compress"></i>'
+        : '<i class="fas fa-expand"></i>';
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && browseContainer.classList.contains('fullscreen')) {
+        browseContainer.classList.remove('fullscreen');
+        fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+      }
+    });
+  </script>
+</body>
+
+</html>
