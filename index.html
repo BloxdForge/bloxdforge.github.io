@@ -10,6 +10,9 @@
   <title>Facet/Bloxd v5.7</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    /* ========================================
+       BASE STYLES
+       ======================================== */
     * {
       margin: 0;
       padding: 0;
@@ -41,32 +44,77 @@
       padding: 2rem 1rem;
     }
 
-    .hero {
-      background: radial-gradient(ellipse 80% 80% at 50% 30%, #1a1a1a, #0a0a0a);
+    /* ========================================
+       BUTTONS (used across sections)
+       ======================================== */
+    .btn {
+      padding: 0.9rem 2rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1rem;
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 0;
-      border-radius: 100px;
-      background-clip: padding-box;
-      border: 80px solid transparent;
-      box-sizing: border-box;
-      position: relative;
-      overflow: hidden;
-      box-shadow: inset -120px -100px 220px rgba(255, 110, 45, 0.12);
+      gap: 10px;
+      transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
     }
 
-    .hero-container {
-      max-width: 1400px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 3.5rem;
+    .btn-primary {
+      background: #ff5e2e;
+      color: white;
+      box-shadow: 0 15px 25px -10px #ff5e2e80;
+      padding: 1.5rem 3rem;
+      border-radius: 25px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 25px 30px -2px #ff5f2e77;
+    }
+
+    .btn-outline {
+      border: 1px solid #3a3838;
+      color: #ececec;
+      background: #141313;
+    }
+
+    .btn-outline:hover {
+      border-color: #ff5e2e;
+      background: #1e1c1c;
+      transform: translateY(-4px);
+    }
+
+    /* ========================================
+       HERO SECTION
+       ======================================== */
+    .hero {
+      background: radial-gradient(ellipse 80% 80% at 50% 30%, #1a1a1a, #0a0a0a);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      box-shadow: inset -120px -100px 220px rgba(255, 110, 45, 0.12);
+      pointer-events: none;
+    }
+
+    .hero-box {
+      background: #111;
+      border: 2px solid rgba(70, 70, 70, 0.2);
+      border-radius: 80px;
+      margin: 80px;
+      padding: 4rem;
       position: relative;
       z-index: 1;
     }
 
-    .hero-sup {
+    /* Hero header bar (version pill + "made by") */
+    .hero-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -97,6 +145,7 @@
       color: #ff5e2e;
     }
 
+    /* Hero main layout (2-column grid) */
     .hero-main {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -104,6 +153,15 @@
       align-items: center;
     }
 
+    .hero-container {
+      display: flex;
+      flex-direction: column;
+      gap: 3.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Left column: title, description, buttons */
     .hero-left {
       display: flex;
       flex-direction: column;
@@ -134,52 +192,14 @@
       flex-wrap: wrap;
     }
 
-    .btn {
-      padding: 0.9rem 2rem;
-      border-radius: 60px;
-      font-weight: 600;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1);
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .btn-primary {
-      background: #ff5e2e;
-      color: white;
-      box-shadow: 0 15px 25px -10px #ff5e2e80;
-      padding: 30px 50px;
-      border-radius: 25px;
-      transition: all 0.3s cubic-bezier(0.22, 0.98, 0.52, 1);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 25px 30px -2px #ff5f2e77;
-    }
-
-    .btn-outline {
-      border: 1px solid #3a3838;
-      color: #ececec;
-      background: #141313;
-    }
-
-    .btn-outline:hover {
-      border-color: #ff5e2e;
-      background: #1e1c1c;
-      transform: translateY(-4px);
-    }
-
+    /* Right column: teaser cards + testimonial */
     .hero-right {
       display: flex;
       flex-direction: column;
       gap: 2.5rem;
     }
 
+    /* Teaser grid (3 cards showing features) */
     .teaser-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -220,6 +240,7 @@
       color: #9c9898;
     }
 
+    /* Testimonial quote */
     .testimonial {
       background: linear-gradient(145deg, #121111, #0f0e0e);
       border: 1px solid #2a2828;
@@ -271,6 +292,7 @@
       color: #999;
     }
 
+    /* Scroll hint animation at bottom */
     .scroll-hint {
       position: absolute;
       bottom: -190px;
@@ -291,19 +313,14 @@
     }
 
     @keyframes float {
-      0% {
-        transform: translateX(-50%) translateY(0);
-      }
-
-      50% {
-        transform: translateX(-50%) translateY(-6px);
-      }
-
-      100% {
-        transform: translateX(-50%) translateY(0);
-      }
+      0% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-6px); }
+      100% { transform: translateX(-50%) translateY(0); }
     }
 
+    /* ========================================
+       CREATOR LAYER SECTION
+       ======================================== */
     .creator-layer {
       background: #0c0b0b;
       display: flex;
@@ -433,17 +450,9 @@
     }
 
     @keyframes bob {
-      0% {
-        transform: translateY(0px) rotate(0deg);
-      }
-
-      50% {
-        transform: translateY(-20px) rotate(4deg);
-      }
-
-      100% {
-        transform: translateY(0px) rotate(0deg);
-      }
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(4deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
     }
 
     .features-layer {
@@ -687,8 +696,8 @@
         gap: 2rem;
       }
 
-      .hero {
-        border-width: 40px;
+      .hero-box {
+        margin: 40px;
         border-radius: 60px;
       }
 
@@ -720,8 +729,9 @@
     }
 
     @media (max-width: 600px) {
-      .hero {
-        border-width: 20px;
+      .hero-box {
+        margin: 20px;
+        padding: 2rem;
         border-radius: 40px;
       }
 
@@ -752,44 +762,47 @@
 <body>
 
   <section class="snap-section hero">
-    <div class="hero-container">
-      <div class="hero-sup">
-        <span class="version-pill">v5.7 Facet/Bloxd</span>
-        <span class="made-by"><i class="fas fa-bolt"></i> By AIX, GEORGECR</span>
-      </div>
-      <div class="hero-main">
-        <div class="hero-left">
-          <h1 class="hero-title">tools that<br>feel like toys.</h1>
-          <p class="hero-desc">Facet is a launcher for Bloxd with<br> everything you need in one place.</p>
-          <div class="hero-buttons">
-            <a class="btn btn-primary" href="./app/">Launch</a>
-            <a class="btn btn-outline" href="https://discord.com/invite/nVgUe4qrhr" target="_blank"
-              rel="noopener noreferrer">Discord</a>
-          </div>
+    <div class="hero-box">
+      <div class="hero-container">
+        <!-- Hero header: version + creators -->
+        <div class="hero-header">
+          <span class="version-pill">v5.7 Facet/Bloxd</span>
+          <span class="made-by"><i class="fas fa-bolt"></i> By AIX, GEORGECR</span>
         </div>
-        <div class="hero-right">
-          <div class="teaser-grid">
-            <div class="teaser-item"><i class="fas fa-toolbox teaser-icon"></i><span
-                class="teaser-label">Workshop</span><span class="teaser-subtitle">Browse and install packs fast.</span>
+        <div class="hero-main">
+          <div class="hero-left">
+            <h1 class="hero-title">tools that<br>feel like toys.</h1>
+            <p class="hero-desc">Facet is a launcher for Bloxd with<br> everything you need in one place.</p>
+            <div class="hero-buttons">
+              <a class="btn btn-primary" href="./app/">Launch</a>
+              <a class="btn btn-outline" href="https://discord.com/invite/nVgUe4qrhr" target="_blank"
+                rel="noopener noreferrer">Discord</a>
             </div>
-            <div class="teaser-item"><i class="fas fa-gamepad teaser-icon"></i><span class="teaser-label">in game
-                menu</span><span class="teaser-subtitle">Ton of features!</span></div>
-            <div class="teaser-item"><i class="fas fa-paint-brush teaser-icon"></i><span
-                class="teaser-label">Creator</span><span class="teaser-subtitle">Everything you need for
-                creating.</span></div>
           </div>
-          <div class="testimonial">
-            <div class="testimonial-text"><i class="fas fa-quote-left"></i> wow, this is actually good.</div>
-            <div class="testimonial-author">
-              <div class="author-avatar">O</div>
-              <div class="author-info">
-                <h5>Oliver</h5><span>Bloxd.io dev</span>
+          <div class="hero-right">
+            <div class="teaser-grid">
+              <div class="teaser-item"><i class="fas fa-toolbox teaser-icon"></i><span
+                  class="teaser-label">Workshop</span><span class="teaser-subtitle">Browse and install packs fast.</span>
+              </div>
+              <div class="teaser-item"><i class="fas fa-gamepad teaser-icon"></i><span class="teaser-label">in game
+                  menu</span><span class="teaser-subtitle">Ton of features!</span></div>
+              <div class="teaser-item"><i class="fas fa-paint-brush teaser-icon"></i><span
+                  class="teaser-label">Creator</span><span class="teaser-subtitle">Everything you need for
+                  creating.</span></div>
+            </div>
+            <div class="testimonial">
+              <div class="testimonial-text"><i class="fas fa-quote-left"></i> wow, this is actually good.</div>
+              <div class="testimonial-author">
+                <div class="author-avatar">O</div>
+                <div class="author-info">
+                  <h5>Oliver</h5><span>Bloxd.io dev</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <div class="scroll-hint"><i class="fas fa-chevron-down"></i><span>MORE BELOW</span></div>
       </div>
-      <div class="scroll-hint"><i class="fas fa-chevron-down"></i><span>MORE BELOW</span></div>
     </div>
   </section>
 
